@@ -15,6 +15,7 @@ export default function Home() {
             status: getStatus("Concluída"),
             title: "eee, quia temporibus eveniet a libero incidunt suscipit",
             text: "",
+            deadline: "",
           },
           {
             id: "222",
@@ -22,6 +23,7 @@ export default function Home() {
             title:
               "Assumenda, quia temporibus eveniet a libero incidunt suscipit",
             text: "",
+            deadline: "",
           },
           {
             id: "322",
@@ -29,6 +31,7 @@ export default function Home() {
             title:
               "Quidem, ipsam illum quis sed voluptatum quae eum fugit earum",
             text: "",
+            deadline: "",
           },
           {
             id: "422",
@@ -36,6 +39,7 @@ export default function Home() {
             title:
               "Quidem, ipsam illum quis sed voluptatum quae eum fugit earum",
             text: "",
+            deadline: "",
           },
         ]}
       />

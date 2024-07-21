@@ -1,19 +1,14 @@
 import {
-  Box,
-  ButtonGroup,
-  CheckboxIcon,
+  Flex,
+  IconButton,
   Editable,
   EditableInput,
   EditablePreview,
-  Flex,
-  IconButton,
-  Input,
-  ListIcon,
-  MenuButton,
   useEditableControls,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { MdEdit } from "react-icons/md";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface Props {
   text: string;
@@ -29,6 +24,7 @@ interface Props {
     | "xx-small"
     | "xxx-large";
 }
+
 export const EditableTaskItem: React.FC<Props> = ({
   text,
   onClick,
@@ -36,7 +32,6 @@ export const EditableTaskItem: React.FC<Props> = ({
   textSize,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
-
   return (
     <Flex
       justifyContent="center"
@@ -45,6 +40,7 @@ export const EditableTaskItem: React.FC<Props> = ({
       padding={2}
       height={"100%"}
       width={"100%"}
+      position="relative"
     >
       <Editable
         defaultValue={text}

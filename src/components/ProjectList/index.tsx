@@ -9,11 +9,13 @@ import {
   VStack,
   HStack,
   Divider,
+  IconButton,
 } from "@chakra-ui/react";
 import EditableTask from "../EditableTask";
 import { reorder } from "@/utils/reorder";
 import { Task } from "@/@core/domain/task";
 import { useCreateTask } from "@/contexts/useCreateTaskContext";
+import { MdDelete } from "react-icons/md";
 
 interface Props {
   tasks: Task[];
@@ -33,6 +35,15 @@ export default function ProjectList(props: Props): ReactElement {
 
     const items = reorder(tasks, result.source.index, result.destination.index);
     setTasks(items);
+  }
+  // Function to determine if a task is overdue or completed within the deadline
+  function getTaskStatusColor(deadline: string, status: string): string {
+    const now = new Date();
+    const deadlineDate = new Date(deadline);
+    if (status === "Completed") {
+      return deadlineDate >= now ? "green.100" : "red.100";
+    }
+    return deadlineDate < now ? "red.200" : "gray.100";
   }
 
   return (
@@ -92,6 +103,8 @@ export default function ProjectList(props: Props): ReactElement {
                             text={task.title}
                             onClick={() => createTask.onOpen(task)}
                           />
+                          <EditableTask.DueDate isDue={true} />
+                          <EditableTask.DeleteButton onClick={() => {}} />
                         </EditableTask.Root>
                       </Box>
                     )}
