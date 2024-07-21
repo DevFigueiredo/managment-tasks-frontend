@@ -46,7 +46,11 @@ export const DetailTaskDrawer: React.FC<Props> = ({
         <Box pl={5} pr={5}>
           <EditableTask.Root>
             <EditableTask.Status status={task.status} />
-            <EditableTask.Item text={task.title} textSize="large" />
+            <EditableTask.Item
+              text={task.title}
+              textSize="large"
+              disabledControls={true}
+            />
           </EditableTask.Root>
         </Box>
         <DrawerBody>

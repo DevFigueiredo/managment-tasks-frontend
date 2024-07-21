@@ -23,6 +23,7 @@ interface Props {
     | "xx-large"
     | "xx-small"
     | "xxx-large";
+  isEditMode?: boolean;
 }
 
 export const EditableTaskItem: React.FC<Props> = ({
@@ -30,6 +31,7 @@ export const EditableTaskItem: React.FC<Props> = ({
   onClick,
   disabledControls = false,
   textSize,
+  isEditMode,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
   return (
@@ -47,6 +49,7 @@ export const EditableTaskItem: React.FC<Props> = ({
         onClick={onClick}
         flex="1"
         cursor={"pointer"}
+        startWithEditView={isEditMode}
       >
         <EditablePreview
           fontSize={textSize}

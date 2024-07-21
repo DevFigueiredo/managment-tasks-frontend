@@ -84,7 +84,11 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           />
         }
       >
-        <NavItem icon={FiHome} href={Routes.Home}>
+        <NavItem
+          onClick={() => setSelectedProjectId(null)}
+          icon={FiHome}
+          href={Routes.Home}
+        >
           Início
         </NavItem>
 

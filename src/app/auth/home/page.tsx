@@ -25,9 +25,11 @@ import {
   IconButton,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, ViewIcon } from "@chakra-ui/icons";
 import { useProject } from "@/hooks/useProject";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import { Routes } from "@/utils/routes";
 
 const HomePage = () => {
   const { showAddProjectModal, getProjects } = useProject();
@@ -54,6 +56,7 @@ const HomePage = () => {
                 <Th>Nome do Projeto</Th>
                 <Th>Descrição</Th>
                 <Th>Progresso</Th>
+                <Th>Detalhes</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -72,6 +75,15 @@ const HomePage = () => {
                     <Text mt={1} fontSize="sm" color="gray.600">
                       {project.progress}%
                     </Text>
+                  </Td>
+                  <Td>
+                    <Link href={`${Routes.DetailProject}/${project.id}`}>
+                      <IconButton
+                        aria-label="Detalhar Projeto"
+                        icon={<ViewIcon />}
+                        colorScheme="teal"
+                      />
+                    </Link>
                   </Td>
                 </Tr>
               ))}

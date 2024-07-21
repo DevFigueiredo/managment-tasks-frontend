@@ -5,5 +5,6 @@ export class Task {
   status!: IStatus;
   text!: string;
   title!: string;
-  deadline!: string; // ISO string for the deadline date
+  deadline!: string;
+  isNew?: boolean;
 }

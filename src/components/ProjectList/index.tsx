@@ -9,12 +9,16 @@ import {
   VStack,
   HStack,
   Divider,
-  IconButton,
+  Button,
 } from "@chakra-ui/react";
 import EditableTask from "../EditableTask";
 import { reorder } from "@/utils/reorder";
 import { Task } from "@/@core/domain/task";
 import { useTask } from "@/hooks/useTask";
+import AddTask from "../AddTask"; // Certifique-se de que o caminho esteja correto
+import { getStatus } from "@/utils/status";
+import { generateUUID } from "@/utils/generate-uuid";
+import { useToast } from "@chakra-ui/react";
 
 interface Props {
   tasks: Task[];
@@ -26,6 +30,8 @@ interface Props {
 export default function ProjectList(props: Props): ReactElement {
   const [tasks, setTasks] = useState<Task[]>(props.tasks);
   const { showOpenTaskModal } = useTask();
+  const toast = useToast(); // Hook para exibir o toast
+
   function onDragEnd(result: DropResult): void {
     if (!result.destination) {
       return;
@@ -34,16 +40,59 @@ export default function ProjectList(props: Props): ReactElement {
     const items = reorder(tasks, result.source.index, result.destination.index);
     setTasks(items);
   }
-  // Function to determine if a task is overdue or completed within the deadline
-  function getTaskStatusColor(deadline: string, status: string): string {
-    const now = new Date();
-    const deadlineDate = new Date(deadline);
-    if (status === "Completed") {
-      return deadlineDate >= now ? "green.100" : "red.100";
-    }
-    return deadlineDate < now ? "red.200" : "gray.100";
+  function handleAddTask(): void {
+    const newTask: Task = {
+      id: generateUUID(),
+      title: "",
+      deadline: "",
+      text: "",
+      status: getStatus("Não Iniciada"),
+      isNew: true, // Exemplo de flag
+    };
+    setTasks([...tasks, newTask]);
+    toast({
+      title: "Tarefa criada",
+      description: "A nova tarefa foi criada com sucesso.",
+      status: "success",
+      duration: 7000, // Tempo em que o toast ficará visível
+      isClosable: true,
+      render: () => (
+        <Box
+          p={3}
+          bg="teal.500"
+          color="white"
+          borderRadius="md"
+          boxShadow="md"
+          display="flex"
+          flexDirection="column" // Alinha os elementos verticalmente
+        >
+          <Box>
+            <Text fontWeight="bold">Tarefa criada</Text>
+            <Text>A nova tarefa foi criada com sucesso.</Text>
+          </Box>
+          <Button colorScheme="teal" onClick={() => showOpenTaskModal(newTask)}>
+            Visualizar Tarefa
+          </Button>
+        </Box>
+      ),
+    });
   }
 
+  function handleCreateOrUpdateTask() {}
+  function handleDeleteTask(taskId: string): void {
+    // Filtra a lista de tarefas para remover a tarefa com o ID fornecido
+    const updatedTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(updatedTasks);
+
+    // Exibir o toast confirmando a exclusão
+    toast({
+      title: "Tarefa excluída",
+      description: "A tarefa foi removida com sucesso.",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+  }
   return (
     <Box p={4}>
       <VStack spacing={4} align="stretch">
@@ -100,15 +149,21 @@ export default function ProjectList(props: Props): ReactElement {
                           <EditableTask.Item
                             text={task.title}
                             onClick={() => showOpenTaskModal(task)}
+                            isEditMode={task.isNew}
                           />
                           <EditableTask.DueDate isDue={true} />
-                          <EditableTask.DeleteButton onClick={() => {}} />
+                          <EditableTask.DeleteButton
+                            onClick={() => handleDeleteTask(task.id)}
+                          />
                         </EditableTask.Root>
                       </Box>
                     )}
                   </Draggable>
                 ))}
                 {provided1.placeholder}
+
+                {/* Componente para adicionar nova tarefa */}
+                <AddTask onClick={handleAddTask} />
               </Box>
             )}
           </Droppable>
