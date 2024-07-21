@@ -11,22 +11,29 @@ export default function Home() {
           {
             id: "122",
             status: getStatus("Concluída"),
-            text: "eee, quia temporibus eveniet a libero incidunt suscipit",
+            title: "eee, quia temporibus eveniet a libero incidunt suscipit",
+            text: "",
           },
           {
             id: "222",
             status: getStatus("Em Progresso"),
-            text: "Assumenda, quia temporibus eveniet a libero incidunt suscipit",
+            title:
+              "Assumenda, quia temporibus eveniet a libero incidunt suscipit",
+            text: "",
           },
           {
             id: "322",
             status: getStatus("Não Iniciada"),
-            text: "Quidem, ipsam illum quis sed voluptatum quae eum fugit earum",
+            title:
+              "Quidem, ipsam illum quis sed voluptatum quae eum fugit earum",
+            text: "",
           },
           {
             id: "422",
             status: getStatus("Em Progresso"),
-            text: "Quidem, ipsam illum quis sed voluptatum quae eum fugit earum",
+            title:
+              "Quidem, ipsam illum quis sed voluptatum quae eum fugit earum",
+            text: "",
           },
         ]}
       />

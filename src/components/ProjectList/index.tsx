@@ -2,11 +2,11 @@
 import { ReactElement, useState } from "react";
 import type { DropResult } from "@hello-pangea/dnd";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
-import { List } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import EditableTask from "../EditableTask";
-import { IStatus } from "@/utils/status";
 import { reorder } from "@/utils/reorder";
 import { Task } from "@/@core/domain/task";
+import { useCreateTask } from "@/contexts/useCreateTaskContext";
 
 interface Props {
   tasks: Task[];
@@ -14,6 +14,7 @@ interface Props {
 
 export default function ProjectList(props: Props): ReactElement {
   const [tasks, setTasks] = useState<Task[]>(props.tasks);
+  const createTask = useCreateTask();
 
   function onDragEnd(result: DropResult): void {
     if (!result.destination) {
@@ -25,22 +26,14 @@ export default function ProjectList(props: Props): ReactElement {
   }
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="tasks" type="TASK" direction="vertical">
-        {(provided1) => (
-          <article ref={provided1.innerRef} {...provided1.droppableProps}>
-            <List spacing={0}>
-              {tasks.map(({ id, text, status }, index) => {
-                const onChangeStatus = (newStatus: IStatus) => {
-                  setTasks((prevTasks) =>
-                    prevTasks.map((task) =>
-                      task.id === id ? { ...task, status: newStatus } : task
-                    )
-                  );
-                };
-
+    <Box>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="tasks" type="TASK" direction="vertical">
+          {(provided1) => (
+            <article ref={provided1.innerRef} {...provided1.droppableProps}>
+              {tasks.map((task, index) => {
                 return (
-                  <Draggable key={id} draggableId={id} index={index}>
+                  <Draggable key={task.id} draggableId={task.id} index={index}>
                     {(provided) => (
                       <article
                         ref={provided.innerRef}
@@ -49,11 +42,11 @@ export default function ProjectList(props: Props): ReactElement {
                       >
                         <EditableTask.Root>
                           <EditableTask.Draggable />
-                          <EditableTask.Status
-                            status={status}
-                            onChange={onChangeStatus}
+                          <EditableTask.Status status={task.status} />
+                          <EditableTask.Item
+                            text={task.title}
+                            onClick={() => createTask.onOpen(task)}
                           />
-                          <EditableTask.Item text={text} />
                         </EditableTask.Root>
                       </article>
                     )}
@@ -61,10 +54,10 @@ export default function ProjectList(props: Props): ReactElement {
                 );
               })}
               {provided1.placeholder}
-            </List>
-          </article>
-        )}
-      </Droppable>
-    </DragDropContext>
+            </article>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </Box>
   );
 }
