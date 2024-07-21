@@ -15,10 +15,26 @@ import {
 import { useState } from "react";
 import { MdEdit } from "react-icons/md";
 
-// Task.Item
-export const EditableTaskItem: React.FC<{
+interface Props {
   text: string;
-}> = ({ text }) => {
+  onClick?: () => void;
+  disabledControls?: boolean;
+  textSize?:
+    | "large"
+    | "medium"
+    | "small"
+    | "x-large"
+    | "x-small"
+    | "xx-large"
+    | "xx-small"
+    | "xxx-large";
+}
+export const EditableTaskItem: React.FC<Props> = ({
+  text,
+  onClick,
+  disabledControls = false,
+  textSize,
+}) => {
   const [isHovering, setIsHovering] = useState(false);
 
   return (
@@ -26,11 +42,23 @@ export const EditableTaskItem: React.FC<{
       justifyContent="center"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
+      padding={2}
+      height={"100%"}
+      width={"100%"}
     >
-      <Editable defaultValue={text} flex="1">
-        <EditablePreview />
+      <Editable
+        defaultValue={text}
+        onClick={onClick}
+        flex="1"
+        cursor={"pointer"}
+      >
+        <EditablePreview
+          fontSize={textSize}
+          cursor="pointer"
+          _hover={{ color: "blueviolet" }}
+        />
         <EditableInput />
-        <EditableControls isHovering={isHovering} />
+        {!disabledControls && <EditableControls isHovering={isHovering} />}
       </Editable>
     </Flex>
   );
@@ -41,7 +69,7 @@ const EditableControls: React.FC<{ isHovering: boolean }> = ({
 }) => {
   const { isEditing, getEditButtonProps } = useEditableControls();
 
-  return isHovering ? (
+  return isHovering && !isEditing ? (
     <IconButton
       icon={<MdEdit />}
       size="sm"
