@@ -2,29 +2,28 @@
 import { ReactElement, useState } from "react";
 import type { DropResult } from "@hello-pangea/dnd";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
-import { reorder } from "@/utils/reorder";
 import { List } from "@chakra-ui/react";
 import EditableTask from "../EditableTask";
 import { IStatus } from "@/utils/status";
-interface Task {
-  id: string;
-  status: IStatus;
-  text: string;
-}
+import { reorder } from "@/utils/reorder";
+import { Task } from "@/@core/domain/task";
+
 interface Props {
   tasks: Task[];
 }
+
 export default function ProjectList(props: Props): ReactElement {
   const [tasks, setTasks] = useState<Task[]>(props.tasks);
+
   function onDragEnd(result: DropResult): void {
     if (!result.destination) {
       return;
     }
 
     const items = reorder(tasks, result.source.index, result.destination.index);
-    console.log(items);
     setTasks(items);
   }
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="tasks" type="TASK" direction="vertical">
@@ -32,16 +31,16 @@ export default function ProjectList(props: Props): ReactElement {
           <article ref={provided1.innerRef} {...provided1.droppableProps}>
             <List spacing={0}>
               {tasks.map(({ id, text, status }, index) => {
-                console.log(id);
-                const onChangeStatus = (status: IStatus) => {
+                const onChangeStatus = (newStatus: IStatus) => {
                   setTasks((prevTasks) =>
                     prevTasks.map((task) =>
-                      task.id === id ? { ...task, status: status } : task
+                      task.id === id ? { ...task, status: newStatus } : task
                     )
                   );
                 };
+
                 return (
-                  <Draggable key={index} draggableId={id} index={index}>
+                  <Draggable key={id} draggableId={id} index={index}>
                     {(provided) => (
                       <article
                         ref={provided.innerRef}
