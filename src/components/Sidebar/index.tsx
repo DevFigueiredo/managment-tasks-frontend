@@ -1,19 +1,17 @@
 "use client";
 
+import React from "react";
 import {
-  IconButton,
-  Avatar,
   Box,
   CloseButton,
   Flex,
-  HStack,
-  VStack,
+  Text,
   Icon,
   useColorModeValue,
-  Text,
-  Drawer,
-  DrawerContent,
-  useDisclosure,
+  List,
+  ListItem,
+  ListIcon,
+  Button,
   BoxProps,
   FlexProps,
   Menu,
@@ -21,6 +19,10 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  IconButton,
+  HStack,
+  Avatar,
+  VStack,
 } from "@chakra-ui/react";
 import {
   FiHome,
@@ -34,7 +36,50 @@ import {
 } from "react-icons/fi";
 import { IconType } from "react-icons";
 import { useCreateSpace } from "@/contexts/useCreateSpaceContext";
-
+const projects = [
+  {
+    id: "1",
+    name: "Project Alpha",
+    description:
+      "A project focused on developing new features for our main application.",
+    dueDate: new Date("2024-08-15"),
+  },
+  {
+    id: "2",
+    name: "Project Beta",
+    description:
+      "An initiative to improve the user interface and user experience across our platform.",
+    dueDate: new Date("2024-09-01"),
+  },
+  {
+    id: "3",
+    name: "Project Gamma",
+    description:
+      "A research project to explore new technologies and integrate them into our systems.",
+    dueDate: new Date("2024-10-10"),
+  },
+  {
+    id: "4",
+    name: "Project Delta",
+    description:
+      "A project aimed at optimizing performance and scalability of our backend services.",
+    dueDate: new Date("2024-11-20"),
+  },
+  {
+    id: "5",
+    name: "Project Epsilon",
+    description:
+      "A marketing campaign to increase user engagement and acquisition.",
+    dueDate: new Date("2024-12-05"),
+  },
+  {
+    id: "6",
+    name: "Project Zeta",
+    description:
+      "An internal tool for better team collaboration and communication.",
+    dueDate: new Date("2024-07-30"),
+  },
+];
 interface LinkItemProps {
   name: string;
   icon: IconType;
@@ -56,6 +101,7 @@ interface SidebarProps extends BoxProps {
 
 export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const createSpace = useCreateSpace();
+
   const LinkItems: Array<LinkItemProps> = [
     { name: "Home", icon: FiHome },
     { name: "Trending", icon: FiTrendingUp },
@@ -64,6 +110,7 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
     { name: "Settings", icon: FiSettings },
     { name: "Criar Projeto", icon: FiSettings, onClick: createSpace.onOpen },
   ];
+
   return (
     <Box
       transition="3s ease"
@@ -77,17 +124,28 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          Logo
+          Artia
         </Text>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
-      {LinkItems.map((link) => {
-        return (
-          <NavItem key={link.name} icon={link.icon} onClick={link.onClick}>
-            {link.name}
-          </NavItem>
-        );
-      })}
+      <List spacing={3} p={4}>
+        {projects.map((project) => (
+          <ListItem
+            key={project.id}
+            p={2}
+            borderRadius="md"
+            _hover={{ bg: "cyan.400", color: "white" }}
+          >
+            <ListIcon as={FiHome} color="cyan.400" />
+            {project.name}
+          </ListItem>
+        ))}
+      </List>
+      {LinkItems.map((link) => (
+        <NavItem key={link.name} icon={link.icon} onClick={link.onClick}>
+          {link.name}
+        </NavItem>
+      ))}
     </Box>
   );
 };
@@ -156,7 +214,7 @@ export const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         fontFamily="monospace"
         fontWeight="bold"
       >
-        Logo
+        Artia
       </Text>
 
       <HStack spacing={{ base: "0", md: "6" }}>

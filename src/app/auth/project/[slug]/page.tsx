@@ -1,12 +1,14 @@
 "use client";
 import { Box } from "@chakra-ui/react";
 import ProjectList from "@/components/ProjectList";
-import { MdCheckCircle, MdSettings } from "react-icons/md";
-import { getStatus, statusList } from "@/utils/status";
+import { getStatus } from "@/utils/status";
 export default function Home() {
   return (
     <Box>
       <ProjectList
+        projectDescription="teste"
+        projectProgress={60}
+        projectTitle="TItulo"
         tasks={[
           {
             id: "122",

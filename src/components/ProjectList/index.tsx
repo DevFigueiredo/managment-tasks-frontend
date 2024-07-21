@@ -1,8 +1,15 @@
-"use client";
 import { ReactElement, useState } from "react";
 import type { DropResult } from "@hello-pangea/dnd";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
-import { Box } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Text,
+  Progress,
+  VStack,
+  HStack,
+  Divider,
+} from "@chakra-ui/react";
 import EditableTask from "../EditableTask";
 import { reorder } from "@/utils/reorder";
 import { Task } from "@/@core/domain/task";
@@ -10,6 +17,9 @@ import { useCreateTask } from "@/contexts/useCreateTaskContext";
 
 interface Props {
   tasks: Task[];
+  projectTitle: string;
+  projectDescription: string;
+  projectProgress: number; // Progress percentage
 }
 
 export default function ProjectList(props: Props): ReactElement {
@@ -26,19 +36,54 @@ export default function ProjectList(props: Props): ReactElement {
   }
 
   return (
-    <Box>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="tasks" type="TASK" direction="vertical">
-          {(provided1) => (
-            <article ref={provided1.innerRef} {...provided1.droppableProps}>
-              {tasks.map((task, index) => {
-                return (
+    <Box p={4}>
+      <VStack spacing={4} align="stretch">
+        {/* Project Information */}
+        <Box>
+          <Heading as="h2" size="lg" mb={2}>
+            {props.projectTitle}
+          </Heading>
+          <Text>{props.projectDescription}</Text>
+          <Divider my={4} />
+          <Box>
+            <Text mb={2}>Progresso do Projeto:</Text>
+            <Progress
+              value={props.projectProgress}
+              size="lg"
+              colorScheme="teal"
+            />
+            <Text mt={2} fontSize="sm" color="gray.600">
+              {props.projectProgress}% Completo
+            </Text>
+          </Box>
+        </Box>
+
+        {/* Task List */}
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="tasks" type="TASK" direction="vertical">
+            {(provided1) => (
+              <Box
+                ref={provided1.innerRef}
+                {...provided1.droppableProps}
+                p={2}
+                borderWidth="1px"
+                borderRadius="md"
+                borderColor="gray.200"
+              >
+                {tasks.map((task, index) => (
                   <Draggable key={task.id} draggableId={task.id} index={index}>
                     {(provided) => (
-                      <article
+                      <Box
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
+                        p={3}
+                        mb={2}
+                        borderWidth="1px"
+                        borderRadius="md"
+                        borderColor="gray.200"
+                        bg="white"
+                        boxShadow="sm"
                       >
                         <EditableTask.Root>
                           <EditableTask.Draggable />
@@ -48,16 +93,16 @@ export default function ProjectList(props: Props): ReactElement {
                             onClick={() => createTask.onOpen(task)}
                           />
                         </EditableTask.Root>
-                      </article>
+                      </Box>
                     )}
                   </Draggable>
-                );
-              })}
-              {provided1.placeholder}
-            </article>
-          )}
-        </Droppable>
-      </DragDropContext>
+                ))}
+                {provided1.placeholder}
+              </Box>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </VStack>
     </Box>
   );
 }

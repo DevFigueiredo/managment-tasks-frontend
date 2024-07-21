@@ -44,7 +44,7 @@ export const DetailTaskDrawer: React.FC<Props> = ({
         <DrawerCloseButton />
         <DrawerHeader>Detalhes da Atividade</DrawerHeader>
         <Box pl={5} pr={5}>
-          <EditableTask.Root disabledBorder={true}>
+          <EditableTask.Root>
             <EditableTask.Status status={task.status} />
             <EditableTask.Item text={task.title} textSize="large" />
           </EditableTask.Root>
