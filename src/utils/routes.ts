@@ -1,3 +1,4 @@
 export enum Routes {
-  DetailProject = "/auth/project/",
+  DetailProject = "/auth/project",
+  Home = "/auth/home/",
 }
