@@ -35,7 +35,10 @@ import {
   FiChevronDown,
 } from "react-icons/fi";
 import { IconType } from "react-icons";
-import { useCreateSpace } from "@/contexts/useCreateSpaceContext";
+import { AddIcon } from "@chakra-ui/icons";
+import { IoAddSharp } from "react-icons/io5";
+import { MdAddCircleOutline } from "react-icons/md";
+import { useProject } from "@/hooks/useProject";
 const projects = [
   {
     id: "1",
@@ -100,16 +103,7 @@ interface SidebarProps extends BoxProps {
 }
 
 export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const createSpace = useCreateSpace();
-
-  const LinkItems: Array<LinkItemProps> = [
-    { name: "Home", icon: FiHome },
-    { name: "Trending", icon: FiTrendingUp },
-    { name: "Explore", icon: FiCompass },
-    { name: "Favourites", icon: FiStar },
-    { name: "Settings", icon: FiSettings },
-    { name: "Criar Projeto", icon: FiSettings, onClick: createSpace.onOpen },
-  ];
+  const { showAddProjectModal } = useProject();
 
   return (
     <Box
@@ -128,6 +122,9 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         </Text>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
+      <NavItem icon={FiHome} onClick={() => {}}>
+        Home
+      </NavItem>
       <List spacing={3} p={4}>
         {projects.map((project) => (
           <ListItem
@@ -141,11 +138,9 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           </ListItem>
         ))}
       </List>
-      {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon} onClick={link.onClick}>
-          {link.name}
-        </NavItem>
-      ))}
+      <NavItem icon={MdAddCircleOutline} onClick={showAddProjectModal}>
+        Adicionar Projeto
+      </NavItem>
     </Box>
   );
 };

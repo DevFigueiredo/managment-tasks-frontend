@@ -20,7 +20,7 @@ import {
   UseDisclosureProps,
 } from "@chakra-ui/react";
 interface Props extends Required<Omit<UseDisclosureProps, "id">> {}
-const CreateSpaceModal: React.FC<Props> = ({
+const CreateProjectModal: React.FC<Props> = ({
   isOpen,
   onClose,
   defaultIsOpen,
@@ -79,4 +79,4 @@ const CreateSpaceModal: React.FC<Props> = ({
   );
 };
 
-export default CreateSpaceModal;
+export default CreateProjectModal;

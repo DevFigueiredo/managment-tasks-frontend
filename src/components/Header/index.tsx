@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Flex, Heading, Spacer, Button } from "@chakra-ui/react";
+import { Box, Flex, Heading, Projectr, Button } from "@chakra-ui/react";
 
 const Header: React.FC = () => {
   return (
@@ -8,7 +8,7 @@ const Header: React.FC = () => {
         <Heading as="h1" size="md">
           Meu Dashboard
         </Heading>
-        <Spacer />
+        <Projectr />
         <Button colorScheme="teal">Adicionar Projeto</Button>
       </Flex>
     </Box>

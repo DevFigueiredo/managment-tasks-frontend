@@ -4,16 +4,17 @@ import { DetailTaskDrawer } from "@/components/DetailTaskDrawer";
 import { Task } from "@/@core/domain/task";
 import { getStatus } from "@/utils/status";
 
-interface CreateTaskContextProps {
+interface TaskContextProps {
   onOpen: (task: Task) => void;
   onClose: () => void;
 }
 
-const CreateTaskContext = createContext<CreateTaskContextProps | undefined>(
-  undefined
-);
+export const TaskContext = createContext<TaskContextProps>({
+  onClose: () => {},
+  onOpen: () => {},
+});
 
-export const CreateTaskProvider: React.FC<{ children: ReactNode }> = ({
+export const TaskProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [task, setTask] = useState<Task>({
@@ -21,6 +22,7 @@ export const CreateTaskProvider: React.FC<{ children: ReactNode }> = ({
     status: getStatus("Não Iniciada"),
     text: "",
     title: "",
+    deadline: "",
   });
   const { isOpen, onOpen: openDrawer, onClose } = useDisclosure();
   const onOpen = (task: Task) => {
@@ -29,7 +31,7 @@ export const CreateTaskProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   return (
-    <CreateTaskContext.Provider value={{ onOpen, onClose }}>
+    <TaskContext.Provider value={{ onOpen, onClose }}>
       {children}
       <DetailTaskDrawer
         defaultIsOpen={false}
@@ -38,12 +40,12 @@ export const CreateTaskProvider: React.FC<{ children: ReactNode }> = ({
         onClose={onClose}
         task={task}
       />
-    </CreateTaskContext.Provider>
+    </TaskContext.Provider>
   );
 };
 
-export const useCreateTask = (): CreateTaskContextProps => {
-  const context = useContext(CreateTaskContext);
+export const useCreateTask = (): TaskContextProps => {
+  const context = useContext(TaskContext);
   if (!context) {
     throw new Error("useModal must be used within a ModalProvider");
   }

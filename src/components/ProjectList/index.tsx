@@ -14,8 +14,7 @@ import {
 import EditableTask from "../EditableTask";
 import { reorder } from "@/utils/reorder";
 import { Task } from "@/@core/domain/task";
-import { useCreateTask } from "@/contexts/useCreateTaskContext";
-import { MdDelete } from "react-icons/md";
+import { useTask } from "@/hooks/useTask";
 
 interface Props {
   tasks: Task[];
@@ -26,8 +25,7 @@ interface Props {
 
 export default function ProjectList(props: Props): ReactElement {
   const [tasks, setTasks] = useState<Task[]>(props.tasks);
-  const createTask = useCreateTask();
-
+  const { showOpenTaskModal } = useTask();
   function onDragEnd(result: DropResult): void {
     if (!result.destination) {
       return;
@@ -101,7 +99,7 @@ export default function ProjectList(props: Props): ReactElement {
                           <EditableTask.Status status={task.status} />
                           <EditableTask.Item
                             text={task.title}
-                            onClick={() => createTask.onOpen(task)}
+                            onClick={() => showOpenTaskModal(task)}
                           />
                           <EditableTask.DueDate isDue={true} />
                           <EditableTask.DeleteButton onClick={() => {}} />
