@@ -12,15 +12,22 @@ import {
 import { useStatus } from "@/hooks/useStatus";
 import { Status } from "@/@core/domain/entities/status";
 import { FaRegDotCircle } from "react-icons/fa";
-
-export const EditableTaskStatusMenu: React.FC<{
+interface Props {
   status: Status;
-}> = ({ status: statusTask }) => {
+  onChange: (v: Status) => void;
+}
+export const EditableTaskStatusMenu: React.FC<Props> = ({
+  status: statusTask,
+  onChange,
+}) => {
   const { getStatus } = useStatus();
   const { data: statusList } = getStatus();
   const [status, setStatus] = useState<Status>(statusTask);
   const onChangeStatus = (newStatus: Status) => {
     setStatus(newStatus);
+    if (onChange) {
+      onChange(newStatus);
+    }
   };
 
   useEffect(() => {

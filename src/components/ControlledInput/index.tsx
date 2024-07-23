@@ -2,24 +2,30 @@ import {
   Box,
   Input,
   InputProps,
-  useColorModeValue,
   FormControl,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { Control, useController } from "react-hook-form";
+import { Control, useController, RegisterOptions } from "react-hook-form";
 
 interface Props extends InputProps {
-  control?: any; // Control prop to manage form state
+  control?: Control<any>; // Control prop to manage form state
   name: string; // Field name in the form
+  rules?: RegisterOptions; // Validation rules
 }
 
-const ControlledInput: React.FC<Props> = ({ control, name, ...rest }) => {
+const ControlledInput: React.FC<Props> = ({
+  control,
+  name,
+  rules,
+  ...rest
+}) => {
   const {
     field: { onChange, onBlur, value, ref },
     fieldState: { error },
   } = useController({
     name,
     control,
+    rules, // Pass the rules to useController
     defaultValue: "", // Provide a default value if needed
   });
 

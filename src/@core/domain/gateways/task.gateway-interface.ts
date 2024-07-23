@@ -22,8 +22,8 @@ export namespace ITaskHttpGateway {
     projectId: string;
     text?: string;
     title?: string;
-    endDate?: string;
-    statusId: string;
+    endDate?: string | Date;
+    statusId?: string;
   };
 
   export type UpdateTaskPositionRequest = {

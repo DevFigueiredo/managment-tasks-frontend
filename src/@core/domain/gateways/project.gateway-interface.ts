@@ -11,7 +11,7 @@ export namespace IProjectHttpGateway {
 
   export type CreateRequest = {
     name: string;
-    description: string;
+    description?: string;
     endDate: string;
   };
   export type CreateResponse = { id: string };
@@ -19,14 +19,17 @@ export namespace IProjectHttpGateway {
   export type UpdateRequest = {
     id: string;
     name: string;
-    description: string;
-    endDate: string;
+    description?: string;
+    endDate?: string;
   };
-
+  export type DeleteRequest = {
+    id: string;
+  };
   export interface Gateway {
     get(params?: GetRequest): Promise<GetResponse>;
     getDetail(params: GetDetailRequest): Promise<GetDetailResponse>;
     create(params: CreateRequest): Promise<CreateResponse>;
     update(params: UpdateRequest): Promise<void>;
+    delete(params: DeleteRequest): Promise<void>;
   }
 }

@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 import type { DropResult } from "@hello-pangea/dnd";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import {
@@ -8,6 +8,8 @@ import {
   Progress,
   VStack,
   Divider,
+  Stack,
+  Skeleton,
 } from "@chakra-ui/react";
 import EditableTask from "../EditableTask";
 import { reorder } from "@/utils/reorder";
@@ -16,12 +18,14 @@ import { useTask } from "@/hooks/useTask";
 import { CustomButton } from "../CustomButton";
 import { useForm } from "react-hook-form";
 import { useStatus } from "@/hooks/useStatus";
+import { DateTime } from "luxon";
+import { StatusTypeEnum } from "@/utils/status.enum";
+import { generateUUID } from "@/utils/generate-uuid";
+import { useProject } from "@/hooks/useProject";
+import { Project } from "@/@core/domain/entities/project";
 
 interface Props {
   projectId: string;
-  projectTitle: string;
-  projectDescription: string;
-  projectProgress: number; // Progress percentage
 }
 
 export default function ProjectList(props: Props): ReactElement {
@@ -35,15 +39,25 @@ export default function ProjectList(props: Props): ReactElement {
   } = useTask();
   const { getStatus } = useStatus();
   const { data: statusList } = getStatus();
+  const { detailProject } = useProject();
   const { control } = useForm<Task[]>({ mode: "onChange" });
-  const defaultStatusId = statusList?.find((item) => item.default)?.id;
+  const defaultStatus = statusList?.find((item) => item.default);
   const { data: tasksData } = getTasks(props.projectId);
   const [tasks, setTasks] = useState<Task[]>();
+  const [project, setProject] = useState<Project>();
 
   useEffect(() => {
-    console.log("mudou o estado");
     setTasks(tasksData);
   }, [tasksData]);
+
+  useEffect(() => {
+    handleGetDetailProject();
+  }, []);
+  async function handleGetDetailProject() {
+    const project = await detailProject(props.projectId);
+    setProject(project);
+  }
+
   function onDragEnd(result: DropResult): void {
     if (!result.destination || !tasks?.length) {
       return;
@@ -69,29 +83,85 @@ export default function ProjectList(props: Props): ReactElement {
   }
 
   const handleAddTask = useCallback(async () => {
-    if (defaultStatusId) {
+    if (defaultStatus?.id) {
       try {
-        addTask(props.projectId, defaultStatusId);
+        const newTask: Task = {
+          id: generateUUID(),
+          title: "Nova Tarefa",
+          text: "",
+          statusId: defaultStatus.id,
+          isNew: true,
+          projectId: props.projectId,
+          Status: {
+            ...defaultStatus,
+          },
+        };
 
-        if (tasks?.length) {
-          const tasksWithPosition = tasks.map((task, index) => {
-            return {
-              taskId: task.id,
-              position: index,
-            };
-          });
+        // Adiciona a nova tarefa e obtém o ID
+        const { id } = await addTask(newTask);
+        newTask.id = id;
 
-          // Atualizar as posições das tarefas na API
-          updateTaskPosition({
-            projectId: props.projectId,
-            tasks: tasksWithPosition,
-          });
-        }
+        // Adiciona a nova tarefa à lista de tarefas
+        const updatedTasks = [...(tasks || []), newTask];
+        setTasks(updatedTasks);
+
+        // Atualiza as posições das tarefas na API
+        const tasksWithPosition = updatedTasks.map((task, index) => ({
+          taskId: task.id,
+          position: index,
+        }));
+
+        updateTaskPosition({
+          projectId: props.projectId,
+          tasks: tasksWithPosition,
+        });
       } catch (error) {
         console.error("Erro ao adicionar tarefa ou atualizar posições:", error);
       }
     }
-  }, [addTask, defaultStatusId, props.projectId, getTasks, updateTaskPosition]);
+  }, [addTask, defaultStatus, props.projectId, tasks, updateTaskPosition]);
+  const handleDeleteTask = useCallback(
+    async (taskId: string, projectId: string) => {
+      try {
+        deleteTask(taskId, projectId);
+        // Remover a tarefa do estado local
+        setTasks((prevTasks) =>
+          prevTasks?.filter((task) => task.id !== taskId)
+        );
+      } catch (error) {
+        console.error("Erro ao deletar a tarefa:", error);
+      }
+    },
+    []
+  );
+
+  const handleUpdateTask = async (
+    data: Partial<Pick<Task, "text" | "title" | "endDate" | "statusId">> &
+      Pick<Task, "id" | "projectId">
+  ) => {
+    await updateTask({
+      id: data.id,
+      projectId: data.projectId,
+      text: data.text,
+      title: data.title,
+      endDate: data.endDate,
+      statusId: data.statusId,
+    });
+    await handleGetDetailProject();
+  };
+  if (!project) {
+    return (
+      <Box p={4}>
+        <Stack>
+          <Skeleton height="40px" />
+          <Skeleton height="40px" />
+          <Skeleton height="60px" />
+          <Skeleton height="300px" />
+          <Skeleton height="60px" />
+        </Stack>
+      </Box>
+    );
+  }
 
   return (
     <Box p={4}>
@@ -99,21 +169,23 @@ export default function ProjectList(props: Props): ReactElement {
         {/* Project Information */}
         <Box>
           <Heading as="h2" size="lg" mb={2}>
-            {props.projectTitle}
+            {project?.name}
           </Heading>
-          <Text>{props.projectDescription}</Text>
+          <Text>{project?.description}</Text>
           <Divider my={4} />
-          <Box>
-            <Text mb={2}>Progresso do Projeto:</Text>
-            <Progress
-              value={props.projectProgress}
-              size="lg"
-              colorScheme="teal"
-            />
-            <Text mt={2} fontSize="sm" color="gray.600">
-              {props.projectProgress}% Completo
-            </Text>
-          </Box>
+          {project && (
+            <Box>
+              <Text mb={2}>Progresso do Projeto:</Text>
+              <Progress
+                value={project?.completionPercentage || 0}
+                size="lg"
+                colorScheme="teal"
+              />
+              <Text mt={2} fontSize="sm" color="gray.600">
+                {project?.completionPercentage || 0}% Completo
+              </Text>
+            </Box>
+          )}
         </Box>
 
         {/* Task List */}
@@ -128,48 +200,83 @@ export default function ProjectList(props: Props): ReactElement {
                 borderRadius="md"
                 borderColor="gray.200"
               >
-                {tasks?.map((task, index) => (
-                  <Draggable key={task.id} draggableId={task.id} index={index}>
-                    {(provided) => (
-                      <Box
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        p={3}
-                        mb={2}
-                        borderWidth="1px"
-                        borderRadius="md"
-                        borderColor="gray.200"
-                        bg="white"
-                        boxShadow="sm"
-                      >
-                        <EditableTask.Root code={task.id}>
-                          <EditableTask.Draggable />
-                          <EditableTask.Status status={task.Status} />
-                          <EditableTask.Item
-                            name={`task.${index}.title`}
-                            control={control}
-                            text={task.title}
-                            onClick={() => showOpenTaskModal(task)}
-                            isEditMode={task.isNew || false}
-                            onEditEnd={(text) => {
-                              updateTask({
-                                id: task.id,
-                                statusId: task.statusId,
-                                title: text,
-                                projectId: props.projectId,
-                              });
-                            }}
-                          />
-                          <EditableTask.DueDate isDue={true} />
-                          <EditableTask.DeleteButton
-                            onClick={() => deleteTask(task.id, props.projectId)}
-                          />
-                        </EditableTask.Root>
-                      </Box>
-                    )}
-                  </Draggable>
-                ))}
+                {tasks?.map((task, index) => {
+                  const isDueDate =
+                    task.endDate &&
+                    DateTime.fromISO(task.endDate as string) <
+                      DateTime.local().startOf("day") &&
+                    task.Status.description !== "Concluído";
+
+                  return (
+                    <Draggable
+                      key={task.id}
+                      draggableId={task.id}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <Box
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          p={3}
+                          mb={2}
+                          borderWidth="1px"
+                          borderRadius="md"
+                          borderColor="gray.200"
+                          bg="white"
+                          boxShadow="sm"
+                        >
+                          <EditableTask.Root code={task.id}>
+                            <EditableTask.Draggable />
+                            <EditableTask.Status
+                              onChange={(status) => {
+                                handleUpdateTask({
+                                  id: task.id,
+                                  statusId: status.id,
+                                  projectId: props.projectId,
+                                });
+                              }}
+                              status={task.Status}
+                            />
+                            <EditableTask.Item
+                              name={`task.${index}.title`}
+                              control={control}
+                              text={task.title}
+                              onClick={() => showOpenTaskModal(task)}
+                              isEditMode={task.isNew || false}
+                              onEditEnd={(text) => {
+                                setTasks(
+                                  tasks.map((v) => ({ ...v, isNew: false }))
+                                );
+                                handleUpdateTask({
+                                  id: task.id,
+                                  title: text,
+                                  projectId: props.projectId,
+                                });
+                              }}
+                            />
+                            <EditableTask.DueDate
+                              dueDate={task.endDate as Date}
+                              onDueDateChange={(v) =>
+                                handleUpdateTask({
+                                  id: task.id,
+                                  endDate: v,
+                                  projectId: props.projectId,
+                                })
+                              }
+                              isDue={!isDueDate}
+                            />
+                            <EditableTask.DeleteButton
+                              onClick={() =>
+                                handleDeleteTask(task.id, props.projectId)
+                              }
+                            />
+                          </EditableTask.Root>
+                        </Box>
+                      )}
+                    </Draggable>
+                  );
+                })}
                 {provided1.placeholder}
 
                 <CustomButton

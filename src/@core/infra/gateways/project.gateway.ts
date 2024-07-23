@@ -22,6 +22,12 @@ export const ProjectHttpGateway: IProjectHttpGateway.Gateway = {
     return response.data;
   },
 
+  async delete(params: IProjectHttpGateway.DeleteRequest): Promise<void> {
+    await http.delete<IProjectHttpGateway.GetDetailResponse>(
+      `/projects/${params.id}`
+    );
+  },
+
   async create(
     params: IProjectHttpGateway.CreateRequest
   ): Promise<IProjectHttpGateway.CreateResponse> {

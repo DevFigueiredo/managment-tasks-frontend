@@ -1,9 +1,9 @@
 export interface Project {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   startDate: string;
-  endDate: string;
+  endDate?: string | Date;
   createdAt: string;
   updatedAt: string;
   completionPercentage: number;

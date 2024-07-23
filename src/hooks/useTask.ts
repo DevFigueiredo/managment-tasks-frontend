@@ -19,42 +19,14 @@ export function useTask() {
       },
     });
   }, []);
-  function addTask(projectId: string, statusId: string) {
-    const newTask: Omit<Task, "Status"> = {
-      id: generateUUID(),
-      title: "Nova Tarefa",
-      text: "",
-      statusId,
-      isNew: true,
-      projectId: projectId,
-    };
-    createTaskMutation.mutate(newTask);
+  async function addTask(newTask: Omit<Task, "Status">) {
+    const taskCreated = await TaskHttpGateway.create({ ...newTask });
+    return taskCreated;
   }
 
-  const createTaskMutation = useMutation({
-    mutationFn: async (
-      task: Pick<Task, "text" | "title" | "endDate" | "statusId" | "projectId">
-    ) => {
-      const taskCreated = await TaskHttpGateway.create({ ...task });
-      return taskCreated;
-    },
-    onSuccess: (data, variables, context) => {
-      queryClient.invalidateQueries({
-        queryKey: ["tasks", variables.projectId],
-      }); // Invalidate the tasks query
-    },
-  });
-
-  const updateTaskMutation = useMutation({
-    mutationFn: async (task: ITaskHttpGateway.UpdateRequest) => {
-      await TaskHttpGateway.update({ ...task });
-    },
-    onSuccess: (data, variables, context) => {
-      queryClient.invalidateQueries({
-        queryKey: ["tasks", variables.projectId],
-      }); // Invalidate the tasks query
-    },
-  });
+  async function updateTask(task: ITaskHttpGateway.UpdateRequest) {
+    await TaskHttpGateway.update({ ...task });
+  }
 
   const updatePositionsTaskMutation = useMutation({
     mutationFn: async (data: ITaskHttpGateway.UpdateTaskPositionRequest) => {
@@ -67,7 +39,7 @@ export function useTask() {
     },
   });
 
-  const getDetailTask = (task: Pick<Task, "id">) => {
+  const getDetailTask = useCallback((task: Pick<Task, "id">) => {
     return useQuery({
       queryKey: ["detail-task", task.id], // Include taskId to differentiate between tasks
       queryFn: async () => {
@@ -75,7 +47,7 @@ export function useTask() {
         return taskDetail;
       },
     });
-  };
+  }, []);
   const deleteTaskMutation = useMutation({
     mutationFn: async (task: Pick<Task, "id" | "projectId">) => {
       await TaskHttpGateway.delete({ ...task });
@@ -100,9 +72,8 @@ export function useTask() {
 
   return {
     showOpenTaskModal,
-    createTask: createTaskMutation.mutate,
     addTask,
-    updateTask: updateTaskMutation.mutate,
+    updateTask,
     getTasks,
     getDetailTask,
     deleteTask,
