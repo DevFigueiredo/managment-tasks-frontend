@@ -2,46 +2,24 @@
 import { Box } from "@chakra-ui/react";
 import ProjectList from "@/components/ProjectList";
 import { getStatus } from "@/utils/status";
-export default function Home() {
+import { useTask } from "@/hooks/useTask";
+export interface Props {
+  params: {
+    slug: string;
+  };
+}
+
+export default function ProjectPage(props: Props) {
+  const { getTasks } = useTask();
+  const { data: tasks } = getTasks(props.params.slug);
   return (
     <Box>
       <ProjectList
+        projectId={props.params.slug}
         projectDescription="teste"
         projectProgress={60}
         projectTitle="TItulo"
-        tasks={[
-          {
-            id: "122",
-            status: getStatus("Concluída"),
-            title: "eee, quia temporibus eveniet a libero incidunt suscipit",
-            text: "",
-            deadline: "",
-          },
-          {
-            id: "222",
-            status: getStatus("Em Progresso"),
-            title:
-              "Assumenda, quia temporibus eveniet a libero incidunt suscipit",
-            text: "",
-            deadline: "",
-          },
-          {
-            id: "322",
-            status: getStatus("Não Iniciada"),
-            title:
-              "Quidem, ipsam illum quis sed voluptatum quae eum fugit earum",
-            text: "",
-            deadline: "",
-          },
-          {
-            id: "422",
-            status: getStatus("Em Progresso"),
-            title:
-              "Quidem, ipsam illum quis sed voluptatum quae eum fugit earum",
-            text: "",
-            deadline: "",
-          },
-        ]}
+        tasks={tasks}
       />
     </Box>
   );

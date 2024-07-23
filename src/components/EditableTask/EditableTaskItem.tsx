@@ -6,11 +6,14 @@ import {
   EditablePreview,
   useEditableControls,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
+import { useForm, useController } from "react-hook-form";
 import "react-datepicker/dist/react-datepicker.css";
 
 interface Props {
+  name: string;
+  control: any;
   text: string;
   onClick?: () => void;
   disabledControls?: boolean;
@@ -24,16 +27,27 @@ interface Props {
     | "xx-small"
     | "xxx-large";
   isEditMode?: boolean;
+  onEditEnd?: (text: string) => void;
 }
 
 export const EditableTaskItem: React.FC<Props> = ({
+  name,
+  control,
   text,
   onClick,
   disabledControls = false,
   textSize,
   isEditMode,
+  onEditEnd,
 }) => {
+  const { field } = useController({
+    name,
+    control,
+    defaultValue: text,
+  });
+
   const [isHovering, setIsHovering] = useState(false);
+
   return (
     <Flex
       justifyContent="center"
@@ -45,21 +59,47 @@ export const EditableTaskItem: React.FC<Props> = ({
       position="relative"
     >
       <Editable
-        defaultValue={text}
-        onClick={onClick}
+        value={field.value}
         flex="1"
         cursor={"pointer"}
         startWithEditView={isEditMode}
+        onChange={(val) => {
+          console.log("val", val);
+          return field.onChange(val);
+        }}
+        onBlur={() => {
+          if (onEditEnd) onEditEnd(field.value);
+        }}
       >
-        <EditablePreview
-          fontSize={textSize}
-          cursor="pointer"
-          _hover={{ color: "blueviolet" }}
+        <Input
+          disabledControls={disabledControls}
+          textSize={textSize}
+          isHovering={isHovering}
+          onEdit={() => onEditEnd && onEditEnd(field.value)}
+          onClick={onClick}
         />
-        <EditableInput />
-        {!disabledControls && <EditableControls isHovering={isHovering} />}
       </Editable>
     </Flex>
+  );
+};
+
+const Input: React.FC<
+  Pick<Props, "disabledControls" | "textSize" | "onClick"> & {
+    isHovering: boolean;
+    onEdit: () => void;
+  }
+> = ({ disabledControls = false, textSize, isHovering, onEdit, onClick }) => {
+  return (
+    <>
+      <EditablePreview
+        fontSize={textSize}
+        cursor="pointer"
+        onClick={onClick}
+        _hover={{ color: "blueviolet" }}
+      />
+      <EditableInput />
+      {!disabledControls && <EditableControls isHovering={isHovering} />}
+    </>
   );
 };
 

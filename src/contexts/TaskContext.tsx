@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import { DetailTaskDrawer } from "@/components/DetailTaskDrawer";
-import { Task } from "@/@core/domain/task";
-import { getStatus } from "@/utils/status";
+import { Task } from "@/@core/domain/entities/task";
 
 interface TaskContextProps {
   onOpen: (task: Task) => void;
@@ -19,10 +18,11 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [task, setTask] = useState<Task>({
     id: "",
-    status: getStatus("Não Iniciada"),
+    statusId: "",
     text: "",
     title: "",
-    deadline: "",
+    endDate: "",
+    projectId: "",
   });
   const { isOpen, onOpen: openDrawer, onClose } = useDisclosure();
   const onOpen = (task: Task) => {

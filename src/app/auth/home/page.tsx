@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -27,7 +27,6 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon, ViewIcon } from "@chakra-ui/icons";
 import { useProject } from "@/hooks/useProject";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { Routes } from "@/utils/routes";
 
@@ -66,14 +65,14 @@ const HomePage = () => {
                   <Td>{project.name}</Td>
                   <Td>
                     <Progress
-                      value={project.progress}
+                      value={project.completionPercentage}
                       colorScheme="teal"
                       size="sm"
                       borderRadius="md"
                       hasStripe
                     />
                     <Text mt={1} fontSize="sm" color="gray.600">
-                      {project.progress}%
+                      {project.completionPercentage}%
                     </Text>
                   </Td>
                   <Td>

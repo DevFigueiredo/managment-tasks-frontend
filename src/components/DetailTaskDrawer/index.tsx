@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Drawer,
   DrawerBody,
@@ -11,7 +11,6 @@ import {
   useDisclosure,
   UseDisclosureProps,
   List,
-  Textarea,
   Input,
   FormControl,
   FormLabel,
@@ -19,7 +18,11 @@ import {
   Box,
 } from "@chakra-ui/react";
 import EditableTask from "../EditableTask";
-import { Task } from "@/@core/domain/task";
+import { Task } from "@/@core/domain/entities/task";
+import { useForm } from "react-hook-form";
+import { useTask } from "@/hooks/useTask";
+import { ControlledTextArea } from "../ControlledTextArea";
+import ControlledInput from "../ControlledInput";
 
 interface Props extends Required<Omit<UseDisclosureProps, "id" | "onOpen">> {
   task: Task;
@@ -32,6 +35,20 @@ export const DetailTaskDrawer: React.FC<Props> = ({
   onClose,
   task,
 }) => {
+  const { control } = useForm<Task>();
+  const { updateTask } = useTask();
+  const handleCreateOrUpdateTask = useCallback(
+    (title: string, taskId: string) => {
+      return updateTask({
+        title,
+        projectId: task.projectId,
+        id: taskId,
+        text: "",
+        statusId: "",
+      });
+    },
+    []
+  );
   return (
     <Drawer
       isOpen={defaultIsOpen || isOpen}
@@ -45,8 +62,13 @@ export const DetailTaskDrawer: React.FC<Props> = ({
         <DrawerHeader>Detalhes da Atividade</DrawerHeader>
         <Box pl={5} pr={5}>
           <EditableTask.Root>
-            <EditableTask.Status status={task.status} />
+            <EditableTask.Status status={task.Status} />
             <EditableTask.Item
+              name="task"
+              onEditEnd={(text) => {
+                handleCreateOrUpdateTask(text, task.id);
+              }}
+              control={control}
               text={task.title}
               textSize="large"
               disabledControls={true}
@@ -56,7 +78,9 @@ export const DetailTaskDrawer: React.FC<Props> = ({
         <DrawerBody>
           <FormControl mb={4}>
             <FormLabel>Data Prazo</FormLabel>
-            <Input
+            <ControlledInput
+              name="endDate"
+              control={control}
               placeholder="Prazo da atividade"
               size="md"
               type="datetime-local"
@@ -64,7 +88,12 @@ export const DetailTaskDrawer: React.FC<Props> = ({
           </FormControl>
           <FormControl>
             <FormLabel>Anotação</FormLabel>
-            <Textarea placeholder="Here is a sample placeholder" size="sm" />
+            <ControlledTextArea
+              control={control}
+              name="text"
+              placeholder="Here is a sample placeholder"
+              size="sm"
+            />
             <FormHelperText></FormHelperText>
           </FormControl>
         </DrawerBody>
