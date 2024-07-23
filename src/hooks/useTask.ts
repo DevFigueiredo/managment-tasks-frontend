@@ -17,6 +17,7 @@ export function useTask() {
         const tasks = await TaskHttpGateway.get({ projectId });
         return tasks;
       },
+      refetchOnWindowFocus: true,
     });
   }, []);
   async function addTask(newTask: Omit<Task, "Status">) {
@@ -26,6 +27,12 @@ export function useTask() {
 
   async function updateTask(task: ITaskHttpGateway.UpdateRequest) {
     await TaskHttpGateway.update({ ...task });
+    queryClient.invalidateQueries({
+      queryKey: ["tasks", task.projectId],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["detail-task", task.id],
+    });
   }
 
   const updatePositionsTaskMutation = useMutation({
@@ -41,6 +48,7 @@ export function useTask() {
 
   const getDetailTask = useCallback((task: Pick<Task, "id">) => {
     return useQuery({
+      refetchOnWindowFocus: true,
       queryKey: ["detail-task", task.id], // Include taskId to differentiate between tasks
       queryFn: async () => {
         const taskDetail = await TaskHttpGateway.getDetail({ ...task });
@@ -57,6 +65,10 @@ export function useTask() {
       queryClient.invalidateQueries({
         queryKey: ["tasks", variables.projectId],
       }); // Invalidate the tasks query
+      // Also invalidate the project details query
+      queryClient.invalidateQueries({
+        queryKey: [variables.projectId],
+      });
     },
     onError: (error) => {
       console.error("Error deleting task:", error);
@@ -66,8 +78,8 @@ export function useTask() {
   function deleteTask(taskId: string, projectId: string) {
     deleteTaskMutation.mutate({ id: taskId, projectId });
   }
-  function showOpenTaskModal(task: Task) {
-    taskContext.onOpen(task);
+  function showOpenTaskModal(task: Task, projectId: string) {
+    taskContext.onOpen(task, projectId);
   }
 
   return {

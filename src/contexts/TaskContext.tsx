@@ -4,7 +4,7 @@ import { DetailTaskDrawer } from "@/components/DetailTaskDrawer";
 import { Task } from "@/@core/domain/entities/task";
 
 interface TaskContextProps {
-  onOpen: (task: Task) => void;
+  onOpen: (task: Task, projectId: string) => void;
   onClose: () => void;
 }
 
@@ -23,10 +23,11 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
     title: "",
     endDate: "",
     projectId: "",
+    Status: Object.create({}),
   });
   const { isOpen, onOpen: openDrawer, onClose } = useDisclosure();
-  const onOpen = (task: Task) => {
-    setTask(task);
+  const onOpen = (task: Task, projectId: string) => {
+    setTask({ ...task, projectId });
     openDrawer();
   };
 

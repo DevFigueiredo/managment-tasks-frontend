@@ -42,21 +42,14 @@ export default function ProjectList(props: Props): ReactElement {
   const { detailProject } = useProject();
   const { control } = useForm<Task[]>({ mode: "onChange" });
   const defaultStatus = statusList?.find((item) => item.default);
-  const { data: tasksData } = getTasks(props.projectId);
+  const { data: tasksData, refetch } = getTasks(props.projectId);
   const [tasks, setTasks] = useState<Task[]>();
-  const [project, setProject] = useState<Project>();
-
+  const { data: project, refetch: refetchProject } = detailProject(
+    props.projectId
+  );
   useEffect(() => {
     setTasks(tasksData);
   }, [tasksData]);
-
-  useEffect(() => {
-    handleGetDetailProject();
-  }, []);
-  async function handleGetDetailProject() {
-    const project = await detailProject(props.projectId);
-    setProject(project);
-  }
 
   function onDragEnd(result: DropResult): void {
     if (!result.destination || !tasks?.length) {
@@ -124,10 +117,6 @@ export default function ProjectList(props: Props): ReactElement {
     async (taskId: string, projectId: string) => {
       try {
         deleteTask(taskId, projectId);
-        // Remover a tarefa do estado local
-        setTasks((prevTasks) =>
-          prevTasks?.filter((task) => task.id !== taskId)
-        );
       } catch (error) {
         console.error("Erro ao deletar a tarefa:", error);
       }
@@ -147,7 +136,8 @@ export default function ProjectList(props: Props): ReactElement {
       endDate: data.endDate,
       statusId: data.statusId,
     });
-    await handleGetDetailProject();
+    refetchProject();
+    refetch();
   };
   if (!project) {
     return (
@@ -205,7 +195,7 @@ export default function ProjectList(props: Props): ReactElement {
                     task.endDate &&
                     DateTime.fromISO(task.endDate as string) <
                       DateTime.local().startOf("day") &&
-                    task.Status.description !== "Concluído";
+                    task.Status.type !== StatusTypeEnum.closed;
 
                   return (
                     <Draggable
@@ -226,7 +216,10 @@ export default function ProjectList(props: Props): ReactElement {
                           bg="white"
                           boxShadow="sm"
                         >
-                          <EditableTask.Root code={task.id}>
+                          <EditableTask.Root
+                            code={task.id}
+                            startDate={task.startDate as Date}
+                          >
                             <EditableTask.Draggable />
                             <EditableTask.Status
                               onChange={(status) => {
@@ -242,7 +235,9 @@ export default function ProjectList(props: Props): ReactElement {
                               name={`task.${index}.title`}
                               control={control}
                               text={task.title}
-                              onClick={() => showOpenTaskModal(task)}
+                              onClick={() =>
+                                showOpenTaskModal(task, props.projectId)
+                              }
                               isEditMode={task.isNew || false}
                               onEditEnd={(text) => {
                                 setTasks(

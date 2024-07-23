@@ -1,18 +1,27 @@
-import { Box, Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
-import { CalendarIcon } from "@chakra-ui/icons";
+"use client";
+import {
+  Box,
+  Button,
+  IconButton,
+  useDisclosure,
+  useTheme,
+} from "@chakra-ui/react";
+import { CalendarIcon, EditIcon } from "@chakra-ui/icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { ptBR } from "date-fns/locale"; // Importa a localidade pt-BR para o date-fns
+import { ptBR } from "date-fns/locale";
 import { format } from "date-fns";
 import { useController, Control, RegisterOptions } from "react-hook-form";
 import { useState } from "react";
 
 interface Props {
-  control: Control<any>; // Passa o controle do react-hook-form
-  name: string; // Nome do campo no formulário
-  placeholder?: string; // Placeholder opcional
-  isDue?: boolean; // Indica se a data está dentro ou fora do prazo
-  rules?: RegisterOptions; // Regras de validação
+  control: Control<any>;
+  name: string;
+  placeholder?: string;
+  isDue?: boolean;
+  rules?: RegisterOptions;
+  onDateChange?: (date: Date | null) => void; // Função para lidar com a alteração da data
+  defaultDate?: Date | null; // Valor padrão para a data
 }
 
 export const ControlledDate: React.FC<Props> = ({
@@ -21,6 +30,8 @@ export const ControlledDate: React.FC<Props> = ({
   placeholder = "Selecione uma data",
   isDue = false,
   rules,
+  onDateChange, // Recebe a função para lidar com a alteração da data
+  defaultDate = null, // Valor padrão para a data
 }) => {
   const {
     field: { onChange, onBlur, value, ref },
@@ -28,37 +39,37 @@ export const ControlledDate: React.FC<Props> = ({
   } = useController({
     name,
     control,
-    rules, // Passa as regras de validação para useController
-    defaultValue: null,
+    rules,
+    defaultValue: defaultDate, // Define o valor padrão aqui
   });
 
-  const [showDatePicker, setShowDatePicker] = useState(false); // Controle para mostrar o DatePicker
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const theme = useTheme();
 
-  const dateColor = isDue ? "blue.500" : "red.500"; // Define a cor com base na propriedade isDue
+  const dateColor = isDue ? theme.colors.blue[500] : theme.colors.red[500];
+
+  const handleDateClick = () => setShowDatePicker(true);
+  const handleCloseDatePicker = () => setShowDatePicker(false);
 
   return (
-    <Box position="relative">
-      <InputGroup>
-        <InputLeftElement pointerEvents="none">
-          <CalendarIcon color="gray.500" />
-        </InputLeftElement>
-        <Input
-          value={
-            value
-              ? format(new Date(value), "dd MMM yyyy", { locale: ptBR })
-              : ""
-          }
-          onClick={() => setShowDatePicker(true)} // Mostra o DatePicker ao clicar
-          onChange={(e) => onChange(e.target.value)} // Atualiza o valor do campo
-          readOnly // Mantém o campo não editável diretamente
-          placeholder={placeholder}
-          variant="outline"
-          color={dateColor}
-          ref={ref}
-          borderColor={dateColor} // Define a cor da borda
-          _focus={{ borderColor: dateColor }} // Define a cor da borda ao focar
-        />
-      </InputGroup>
+    <Box position="relative" width="fit-content">
+      <Button
+        onClick={handleDateClick}
+        variant="outline"
+        color={dateColor}
+        borderColor={dateColor}
+        borderRadius="md"
+        padding="8px 16px"
+        rightIcon={<CalendarIcon color={dateColor} />}
+        _hover={{ bg: "gray.100" }}
+        _focus={{ boxShadow: "outline" }}
+        _active={{ bg: "gray.200" }}
+      >
+        {value
+          ? format(new Date(value), "dd MMM yyyy", { locale: ptBR })
+          : placeholder}
+      </Button>
       {showDatePicker && (
         <Box
           position="absolute"
@@ -69,17 +80,19 @@ export const ControlledDate: React.FC<Props> = ({
           bg="white"
           borderRadius="md"
           shadow="md"
+          p={4}
         >
           <DatePicker
-            selected={value ? new Date(value) : null}
+            selected={value ? new Date(value) : defaultDate} // Usa o valor padrão se não houver valor
             onChange={(date) => {
-              onChange(date); // Atualiza o valor do campo
-              setShowDatePicker(false); // Fecha o DatePicker após selecionar a data
+              onChange(date);
+              if (onDateChange) onDateChange(date); // Chama a função onDateChange
+              handleCloseDatePicker();
             }}
             onBlur={onBlur}
             dateFormat="dd MMM yyyy"
             placeholderText={placeholder}
-            onClickOutside={() => setShowDatePicker(false)} // Fecha o DatePicker ao clicar fora
+            onClickOutside={handleCloseDatePicker}
             inline
             locale={ptBR}
           />

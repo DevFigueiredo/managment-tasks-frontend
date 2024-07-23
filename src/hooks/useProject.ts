@@ -19,13 +19,19 @@ export function useProject() {
     });
   }, []);
 
-  const detailProject = useCallback(async (projectId: string) => {
-    const projects = await ProjectHttpGateway.getDetail({ id: projectId });
-    return projects;
+  const detailProject = useCallback((projectId: string) => {
+    return useQuery({
+      queryKey: [projectId],
+      queryFn: async () => {
+        const project = await ProjectHttpGateway.getDetail({ id: projectId });
+        return project;
+      },
+      refetchOnWindowFocus: true,
+    });
   }, []);
 
   const updateProject = useCallback(
-    async (project: Project) => {
+    async (project: Omit<Partial<Project>, "id"> & Pick<Project, "id">) => {
       const projects = await ProjectHttpGateway.update({
         ...project,
         endDate: project.endDate as string,

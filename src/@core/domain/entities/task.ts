@@ -5,7 +5,7 @@ export interface Task {
   id: string;
   text: string;
   title: string;
-  startDate?: string;
+  startDate?: string | Date;
   endDate?: Date | string;
   statusId: string;
   Status: Status;

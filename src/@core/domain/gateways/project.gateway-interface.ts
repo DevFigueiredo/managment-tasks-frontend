@@ -18,7 +18,7 @@ export namespace IProjectHttpGateway {
 
   export type UpdateRequest = {
     id: string;
-    name: string;
+    name?: string;
     description?: string;
     endDate?: string;
   };

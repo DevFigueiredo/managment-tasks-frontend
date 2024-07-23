@@ -5,7 +5,6 @@ export async function middleware(request: NextRequest) {
   const origin = url.origin;
   const pathname = url.pathname;
   const requestHeaders = new Headers(request.headers);
-  console.log("caiu aqui");
   requestHeaders.set("x-url", request.url);
   requestHeaders.set("x-origin", origin);
   requestHeaders.set("x-pathname", pathname);
