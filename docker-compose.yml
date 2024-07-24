@@ -7,8 +7,5 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=https://managment-tasks-backend-latest.onrender.com
-volumes:
-  postgres_data:
+    env_file:
+      - .env
