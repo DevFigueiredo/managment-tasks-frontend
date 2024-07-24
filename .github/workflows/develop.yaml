@@ -47,8 +47,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t danielfigueiredo/managment-tasks-backend:${{env.VERSION}} .
-          docker push danielfigueiredo/managment-tasks-backend:${{env.VERSION}}
+          docker build -t danielfigueiredo/managment-tasks-frontend:${{env.VERSION}} .
+          docker push danielfigueiredo/managment-tasks-frontend:${{env.VERSION}}
 
       - name: Deploy (Webhook Trigger - Render)
         if: github.ref == 'refs/heads/develop'
