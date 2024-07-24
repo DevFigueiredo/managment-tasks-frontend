@@ -150,86 +150,89 @@ const HomePage = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {projects?.map((project, index) => (
-                <Tr key={project.id}>
-                  <Td>{project.name}</Td>
-                  <Td>{project.description}</Td>
-                  <Td>
-                    <Progress
-                      value={project.completionPercentage}
-                      colorScheme="teal"
-                      size="sm"
-                      borderRadius="md"
-                      hasStripe
-                    />
-                    <Text mt={1} fontSize="sm" color="gray.600">
-                      {project.completionPercentage}%
-                    </Text>
-                  </Td>
-                  <Td>
-                    {DateTime.fromISO(
-                      project.startDate as string
-                    ).toLocaleString(DateTime.DATE_MED)}
-                  </Td>
-                  <Td>
-                    <ControlledDate
-                      defaultDate={
-                        project.endDate ? new Date(project.endDate) : null
-                      }
-                      rules={{
-                        required: "A data de término é obrigatória.",
-                        validate: {
-                          notInPast: (date) => {
-                            const selectedDate = DateTime.fromJSDate(date);
-                            const today = DateTime.now();
-                            if (selectedDate < today) {
-                              return "A data não pode estar no passado.";
-                            }
-                            return true;
-                          },
-                        },
-                      }}
-                      name={`project.${index}.endDate`}
-                      control={control}
-                      isDue={true}
-                      onDateChange={(date) => {
-                        // Save the original date before changing
-                        setOriginalDate(getValues(`project.${index}.endDate`));
-                        handleDateChange(project.id, date);
-                      }}
-                    />
-                  </Td>
-                  <Td>
-                    {DateTime.fromISO(project.createdAt).toLocaleString(
-                      DateTime.DATE_MED
-                    )}
-                  </Td>
-                  <Td>
-                    <Stack
-                      direction={{ base: "column", md: "row" }} // Layout flexível
-                      spacing={2} // Espaçamento entre os botões
-                      align="center" // Alinha os botões verticalmente
-                      justify="flex-start" // Alinha os botões horizontalmente
-                    >
-                      <Link href={`${Routes.DetailProject}/${project.id}`}>
-                        <IconButton
-                          aria-label="Detalhar Projeto"
-                          icon={<ViewIcon />}
-                          colorScheme="teal"
-                          size={buttonSize}
-                        />
-                      </Link>
-                      <IconButton
-                        aria-label="Deletar Projeto"
-                        icon={<MdDelete />}
-                        colorScheme="red"
-                        size={buttonSize}
-                        onClick={() => onDeleteClick(project.id)}
+              {projects?.length &&
+                projects?.map((project, index) => (
+                  <Tr key={project.id}>
+                    <Td>{project.name}</Td>
+                    <Td>{project.description}</Td>
+                    <Td>
+                      <Progress
+                        value={project.completionPercentage}
+                        colorScheme="teal"
+                        size="sm"
+                        borderRadius="md"
+                        hasStripe
                       />
-                    </Stack>
-                  </Td>
-                </Tr>
-              ))}
+                      <Text mt={1} fontSize="sm" color="gray.600">
+                        {project.completionPercentage}%
+                      </Text>
+                    </Td>
+                    <Td>
+                      {DateTime.fromISO(
+                        project.startDate as string
+                      ).toLocaleString(DateTime.DATE_MED)}
+                    </Td>
+                    <Td>
+                      <ControlledDate
+                        defaultDate={
+                          project.endDate ? new Date(project.endDate) : null
+                        }
+                        rules={{
+                          required: "A data de término é obrigatória.",
+                          validate: {
+                            notInPast: (date) => {
+                              const selectedDate = DateTime.fromJSDate(date);
+                              const today = DateTime.now();
+                              if (selectedDate < today) {
+                                return "A data não pode estar no passado.";
+                              }
+                              return true;
+                            },
+                          },
+                        }}
+                        name={`project.${index}.endDate`}
+                        control={control}
+                        isDue={true}
+                        onDateChange={(date) => {
+                          // Save the original date before changing
+                          setOriginalDate(
+                            getValues(`project.${index}.endDate`)
+                          );
+                          handleDateChange(project.id, date);
+                        }}
+                      />
+                    </Td>
+                    <Td>
+                      {DateTime.fromISO(project.createdAt).toLocaleString(
+                        DateTime.DATE_MED
+                      )}
+                    </Td>
+                    <Td>
+                      <Stack
+                        direction={{ base: "column", md: "row" }} // Layout flexível
+                        spacing={2} // Espaçamento entre os botões
+                        align="center" // Alinha os botões verticalmente
+                        justify="flex-start" // Alinha os botões horizontalmente
+                      >
+                        <Link href={`${Routes.DetailProject}/${project.id}`}>
+                          <IconButton
+                            aria-label="Detalhar Projeto"
+                            icon={<ViewIcon />}
+                            colorScheme="teal"
+                            size={buttonSize}
+                          />
+                        </Link>
+                        <IconButton
+                          aria-label="Deletar Projeto"
+                          icon={<MdDelete />}
+                          colorScheme="red"
+                          size={buttonSize}
+                          onClick={() => onDeleteClick(project.id)}
+                        />
+                      </Stack>
+                    </Td>
+                  </Tr>
+                ))}
             </Tbody>
           </Table>
           <Flex

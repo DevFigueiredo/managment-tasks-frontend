@@ -101,19 +101,20 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             Meus Projetos
           </Text>
           <VStack spacing={2} align="stretch">
-            {projects?.map((project) => (
-              <NavItem
-                href={`${Routes.DetailProject}/${project.id}`}
-                key={project.id}
-                icon={FiHome}
-                borderRadius="md"
-                p={3}
-                isActive={selectedProjectId === project.id}
-                onClick={() => setSelectedProjectId(project.id)}
-              >
-                {project.name}
-              </NavItem>
-            ))}
+            {projects?.length &&
+              projects?.map((project) => (
+                <NavItem
+                  href={`${Routes.DetailProject}/${project.id}`}
+                  key={project.id}
+                  icon={FiHome}
+                  borderRadius="md"
+                  p={3}
+                  isActive={selectedProjectId === project.id}
+                  onClick={() => setSelectedProjectId(project.id)}
+                >
+                  {project.name}
+                </NavItem>
+              ))}
           </VStack>
         </Box>
 
