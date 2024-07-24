@@ -66,7 +66,6 @@ export const DetailTaskDrawer: React.FC<Props> = ({
     refetch();
   };
 
-  console.log(task);
   return (
     <Drawer
       isOpen={defaultIsOpen || isOpen}

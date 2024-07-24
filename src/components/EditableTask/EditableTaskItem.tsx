@@ -64,7 +64,6 @@ export const EditableTaskItem: React.FC<Props> = ({
         cursor={"pointer"}
         startWithEditView={isEditMode}
         onChange={(val) => {
-          console.log("val", val);
           return field.onChange(val);
         }}
         onBlur={() => {

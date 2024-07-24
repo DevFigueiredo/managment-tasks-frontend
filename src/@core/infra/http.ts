@@ -4,7 +4,7 @@ import { useToast } from "@chakra-ui/react";
 import logger from "@/utils/logger";
 
 const http = axios.create({
-  baseURL: "http://127.0.0.1:3000",
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 120000,
   timeoutErrorMessage: "Connection Timeout",
 });
