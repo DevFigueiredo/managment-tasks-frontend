@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Projeto de Gerenciamento de Atividades
 
-## Getting Started
+Este projeto é uma aplicação de gerenciamento de atividades, construída com [Next.js](https://nextjs.org/) e [Chakra UI](https://chakra-ui.com/). O objetivo é fornecer uma interface moderna e responsiva para gerenciar projetos e tarefas.
 
-First, run the development server:
+## Tecnologias Utilizadas
+
+- **Frontend:** Next.js
+- **Docker:** Sim
+- **CI/CD:** GitHub Actions
+
+## Estrutura do Projeto
+
+### Frontend
+
+- **URL de Publicação:** [Frontend](https://managment-tasks-frontend-latest.onrender.com)
+- **Docker Hub:** [danielfigueiredo/managment-tasks-frontend](https://hub.docker.com/repository/docker/danielfigueiredo/managment-tasks-frontend/general)
+- **Repositório GitHub:** [DevFigueiredo/managment-tasks-frontend](https://github.com/DevFigueiredo/managment-tasks-frontend)
+
+### Backend
+
+- **URL da API:** [Backend](https://managment-tasks-backend-latest.onrender.com)
+- **Documentação Swagger:** [Swagger](https://managment-tasks-backend-latest.onrender.com/docs)
+- **Repositório GitHub:** [DevFigueiredo/managment-tasks-backend](https://github.com/DevFigueiredo/managment-tasks-backend)
+
+## Configuração do Ambiente
+
+1. **Crie um arquivo `.env` na raiz do projeto e adicione a variável de ambiente:**
+
+   ```bash
+   NEXT_PUBLIC_API_URL=URL_DO_BACKEND
+   ```
+
+## Instalação
+
+Para instalar as dependências do projeto, execute:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Executar o Aplicativo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Local
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Para iniciar o aplicativo em modo de desenvolvimento, execute:
 
-## Learn More
+```bash
+npm run start
+```
 
-To learn more about Next.js, take a look at the following resources:
+Para iniciar o aplicativo em modo de observação, execute:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run start:dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Para iniciar o aplicativo em modo de produção, execute:
 
-## Deploy on Vercel
+```bash
+npm run start:prod
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Com Docker
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. **Crie a Imagem Docker:**
+
+   No diretório raiz do seu projeto, execute o seguinte comando:
+
+   ```bash
+   docker-compose build
+   ```
+
+2. **Execute o Contêiner:**
+
+   Após a construção da imagem, inicie o contêiner com:
+
+   ```bash
+   docker-compose up
+   ```
+
+   O Next.js estará disponível na porta `3000` do seu localhost. Acesse [http://localhost:3000](http://localhost:3000) para ver seu projeto em execução.
+
+## Desenvolvimento
+
+Durante o desenvolvimento, você pode mapear o diretório local para o contêiner para que as mudanças feitas no código sejam refletidas imediatamente. O arquivo `docker-compose.yml` já está configurado para isso usando o volume `- .:/app`.
+
+## Comandos Úteis
+
+- **Parar e Remover Contêineres**
+
+  Para parar e remover contêineres em execução:
+
+  ```bash
+  docker-compose down
+  ```
+
+- **Remover Imagens e Volumes**
+
+  Para remover todas as imagens e volumes não utilizados:
+
+  ```bash
+  docker system prune -a --volumes
+  ```
+
+## Suporte
+
+Este projeto é de código aberto e licenciado sob a Licença MIT. Para mais informações sobre como apoiar ou contribuir, consulte [Apoio e Contribuição](https://docs.nestjs.com/support).
+
+## Contato
+
+- **Autor:** [Daniel Figueiredo](mailto:devfigueiredo@gmail.com)
+
+## Licença
+
+Este projeto está licenciado sob a [Licença MIT](LICENSE).
