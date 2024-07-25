@@ -16,18 +16,6 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Use a lighter image for the production environment
-FROM node:18-slim
-
-# Set working directory
-WORKDIR /app
-
-# Copy built files and node_modules from the builder stage
-COPY --from=builder /app ./
-
-# Install production dependencies
-RUN npm install
-
 # Ensure the app has proper permissions
 RUN chown -R node:node /app
 
@@ -38,4 +26,4 @@ USER node
 EXPOSE 3000
 
 # Command to run the application
-CMD ["npm", "start"]
+CMD ["npm", "run","dev"]
