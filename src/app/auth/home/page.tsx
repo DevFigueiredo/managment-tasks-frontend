@@ -121,7 +121,7 @@ const HomePage = () => {
 
   return (
     <Box p={6} bg="gray.50" minH="100vh">
-      <Flex direction="column" minH="100vh">
+      {/* <Flex direction="column" minH="100vh">
         {error && (
           <Alert status="error" mb={4}>
             <AlertIcon />
@@ -260,7 +260,7 @@ const HomePage = () => {
         projectToDelete={projectToDelete}
         setProjectToDelete={setProjectToDelete}
         cancelRef={cancelRef}
-      />
+      /> */}
     </Box>
   );
 };
