@@ -50,7 +50,7 @@ interface SidebarProps extends BoxProps {
 
 export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const { showAddProjectModal, getProjects } = useProject();
-  // const { data: projects } = getProjects();
+  const { data: projects } = getProjects();
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
   );
@@ -101,7 +101,7 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             Meus Projetos
           </Text>
           <VStack spacing={2} align="stretch">
-            {/* {projects?.length &&
+            {projects?.length &&
               projects?.map((project) => (
                 <NavItem
                   href={`${Routes.DetailProject}/${project.id}`}
@@ -114,7 +114,7 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
                 >
                   {project.name}
                 </NavItem>
-              ))} */}
+              ))}
           </VStack>
         </Box>
 
