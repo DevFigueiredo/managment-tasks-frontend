@@ -82,8 +82,6 @@ npm run start:prod
 
 ## Desenvolvimento
 
-Durante o desenvolvimento, você pode mapear o diretório local para o contêiner para que as mudanças feitas no código sejam refletidas imediatamente. O arquivo `docker-compose.yml` já está configurado para isso usando o volume `- .:/app`.
-
 ## Comandos Úteis
 
 - **Parar e Remover Contêineres**
