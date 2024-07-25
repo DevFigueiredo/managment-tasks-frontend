@@ -1,3 +1,4 @@
+"use client";
 import { StatusHttpGateway } from "@/@core/infra/gateways/status.gateway";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";

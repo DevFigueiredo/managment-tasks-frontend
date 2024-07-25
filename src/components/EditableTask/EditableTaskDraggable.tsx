@@ -1,3 +1,4 @@
+"use client";
 import { Box, ListIcon } from "@chakra-ui/react";
 import { MdDragHandle } from "react-icons/md";
 

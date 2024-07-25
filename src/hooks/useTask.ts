@@ -1,3 +1,4 @@
+"use client";
 import { Task } from "@/@core/domain/entities/task";
 import { ITaskHttpGateway } from "@/@core/domain/gateways/task.gateway-interface";
 import { TaskHttpGateway } from "@/@core/infra/gateways/task.gateway";

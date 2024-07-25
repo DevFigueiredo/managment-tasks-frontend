@@ -1,3 +1,4 @@
+"use client";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import { DetailTaskDrawer } from "@/components/DetailTaskDrawer";

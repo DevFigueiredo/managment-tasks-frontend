@@ -1,40 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   CloseButton,
   Flex,
   Text,
-  Icon,
   useColorModeValue,
-  List,
-  ListItem,
-  ListIcon,
-  Button,
   BoxProps,
   FlexProps,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuItem,
-  MenuList,
   IconButton,
   HStack,
-  Avatar,
   VStack,
   StackDivider,
 } from "@chakra-ui/react";
-import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
-  FiMenu,
-  FiBell,
-  FiChevronDown,
-} from "react-icons/fi";
+import { FiHome, FiMenu } from "react-icons/fi";
 import { MdAddCircleOutline } from "react-icons/md";
 import { useProject } from "@/hooks/useProject";
 import { Routes } from "@/utils/routes";
@@ -85,7 +65,10 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         }
       >
         <NavItem
-          onClick={() => setSelectedProjectId(null)}
+          onClick={() => {
+            setSelectedProjectId(null);
+            onClose();
+          }}
           icon={FiHome}
           href={Routes.Home}
         >

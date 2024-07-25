@@ -1,3 +1,4 @@
+"use client";
 import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 import type { DropResult } from "@hello-pangea/dnd";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
