@@ -1,35 +1,41 @@
-# Use a imagem base do Node.js
+# Use the base image for building the application
 FROM node:18 AS builder
 
-# Diretório de trabalho
+# Set working directory
 WORKDIR /app
 
-# Copia o package.json e o package-lock.json (ou yarn.lock)
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Instala as dependências
-RUN npm install
+# Install dependencies
+RUN npm ci
 
-# Copia o restante do código da aplicação
+# Copy the rest of the application code
 COPY . .
 
-# Executa o build da aplicação Next.js
+# Build the application
 RUN npm run build
 
-# Usando uma imagem base mais leve para o ambiente de produção
+# Use a lighter image for the production environment
 FROM node:18-slim
 
-# Definindo o diretório de trabalho
+# Set working directory
 WORKDIR /app
 
-# Copiando os arquivos do build da etapa anterior
+# Copy built files and node_modules from the builder stage
 COPY --from=builder /app ./
 
-# Instalando as dependências de produção
+# Install production dependencies
 RUN npm install
 
-# Expondo a porta que a aplicação Next.js usará
+# Ensure the app has proper permissions
+RUN chown -R node:node /app
+
+# Switch to a non-root user for better security
+USER node
+
+# Expose the port the application will run on
 EXPOSE 3000
 
-# Comando para iniciar a aplicação Next.js
+# Command to run the application
 CMD ["npm", "start"]
