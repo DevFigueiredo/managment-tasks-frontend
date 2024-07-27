@@ -4,7 +4,7 @@ FROM node:18 AS builder
 # Diretório de trabalho
 WORKDIR /app
 
-# Copia o package.json e o package-lock.json (ou yarn.lock)
+# Copia o package.json e o package-lock.json 
 COPY package*.json ./
 
 # Instala as dependências
