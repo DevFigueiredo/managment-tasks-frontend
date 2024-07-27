@@ -17,6 +17,7 @@ export function useProject() {
         return projects;
       },
       refetchOnWindowFocus: true,
+      initialData: [],
     });
   }, []);
 

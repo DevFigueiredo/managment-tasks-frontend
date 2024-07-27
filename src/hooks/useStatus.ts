@@ -7,6 +7,7 @@ export function useStatus() {
   const getStatus = useCallback(() => {
     return useQuery({
       queryKey: ["status"],
+      initialData: [],
       queryFn: async () => {
         const status = await StatusHttpGateway.get();
         return status;

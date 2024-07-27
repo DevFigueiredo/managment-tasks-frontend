@@ -26,7 +26,7 @@ WORKDIR /app
 COPY --from=builder /app ./
 
 # Instalando as dependências de produção
-RUN npm install --only=production
+RUN npm install --omit=dev
 
 # Expondo a porta que a aplicação Next.js usará
 EXPOSE 3000

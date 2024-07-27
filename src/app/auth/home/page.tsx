@@ -143,7 +143,7 @@ const HomePage = () => {
             </Thead>
             <Tbody>
               {projects?.length &&
-                projects.map((project, index) => (
+                projects?.map((project, index) => (
                   <Tr key={project.id}>
                     <Td>{project.name}</Td>
                     <Td>{project.description}</Td>

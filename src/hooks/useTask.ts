@@ -19,6 +19,7 @@ export function useTask() {
         return tasks;
       },
       refetchOnWindowFocus: true,
+      initialData: [],
     });
   }, []);
   async function addTask(newTask: Omit<Task, "Status">) {
