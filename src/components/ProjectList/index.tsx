@@ -46,13 +46,13 @@ export default function ProjectList(props: Props): ReactElement {
   const {
     data: tasksData,
     refetch,
-    isLoading: isLoadingTasks,
+    isFetching: isLoadingTasks,
   } = getTasks(props.projectId);
   const [tasks, setTasks] = useState<Task[]>();
   const {
     data: project,
     refetch: refetchProject,
-    isLoading,
+    isFetching: isLoading,
   } = detailProject(props.projectId);
   useEffect(() => {
     setTasks(tasksData);
