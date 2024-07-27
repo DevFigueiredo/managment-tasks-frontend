@@ -14,6 +14,7 @@ import {
   VStack,
   StackDivider,
   Skeleton,
+  SkeletonText,
 } from "@chakra-ui/react";
 import { FiHome, FiMenu } from "react-icons/fi";
 import { MdAddCircleOutline } from "react-icons/md";
@@ -31,7 +32,7 @@ interface SidebarProps extends BoxProps {
 
 export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const { showAddProjectModal, getProjects } = useProject();
-  const { data: projects = [], isLoading } = getProjects();
+  const { data: projects = [], isFetching: isLoading } = getProjects();
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
   );
@@ -45,7 +46,7 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       w={{ base: "full", md: 60 }}
       pos="fixed"
       h="full"
-      overflowY="auto" // Adiciona rolagem se necessário
+      overflowY="auto"
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
@@ -84,14 +85,15 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           >
             Meus Projetos
           </Text>
-          <VStack spacing={2} align="stretch">
-            {isLoading ? (
-              // Renderiza esqueletos enquanto os dados estão carregando
-              Array.from({ length: 5 }).map((_, index) => (
+          {isLoading ? (
+            <VStack spacing={2} align="stretch">
+              {Array.from({ length: 5 }).map((_, index) => (
                 <Skeleton key={index} height="40px" />
-              ))
-            ) : projects.length > 0 ? (
-              projects.map((project) => (
+              ))}
+            </VStack>
+          ) : projects.length > 0 ? (
+            <VStack spacing={2} align="stretch">
+              {projects.map((project) => (
                 <NavItem
                   href={`${Routes.DetailProject}/${project.id}`}
                   key={project.id}
@@ -103,11 +105,11 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
                 >
                   {project.name}
                 </NavItem>
-              ))
-            ) : (
-              <Text>Nenhum projeto encontrado</Text>
-            )}
-          </VStack>
+              ))}
+            </VStack>
+          ) : (
+            <Text>Nenhum projeto encontrado</Text>
+          )}
         </Box>
         {isLoading ? (
           <Skeleton height="40px" />
