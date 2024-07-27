@@ -13,6 +13,7 @@ import {
   HStack,
   VStack,
   StackDivider,
+  Skeleton,
 } from "@chakra-ui/react";
 import { FiHome, FiMenu } from "react-icons/fi";
 import { MdAddCircleOutline } from "react-icons/md";
@@ -30,7 +31,7 @@ interface SidebarProps extends BoxProps {
 
 export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const { showAddProjectModal, getProjects } = useProject();
-  const { data: projects = [] } = getProjects();
+  const { data: projects = [], isLoading } = getProjects();
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
   );
@@ -84,7 +85,12 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             Meus Projetos
           </Text>
           <VStack spacing={2} align="stretch">
-            {Array.isArray(projects) && projects.length > 0 ? (
+            {isLoading ? (
+              // Renderiza esqueletos enquanto os dados estão carregando
+              Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton key={index} height="40px" />
+              ))
+            ) : projects.length > 0 ? (
               projects.map((project) => (
                 <NavItem
                   href={`${Routes.DetailProject}/${project.id}`}
@@ -103,10 +109,13 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             )}
           </VStack>
         </Box>
-
-        <NavItem icon={MdAddCircleOutline} onClick={showAddProjectModal}>
-          Adicionar Projeto
-        </NavItem>
+        {isLoading ? (
+          <Skeleton height="40px" />
+        ) : (
+          <NavItem icon={MdAddCircleOutline} onClick={showAddProjectModal}>
+            Adicionar Projeto
+          </NavItem>
+        )}
       </VStack>
     </Box>
   );
