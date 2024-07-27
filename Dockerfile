@@ -13,6 +13,8 @@ RUN npm install
 # Copia o restante do código da aplicação
 COPY . .
 
+ENV NEXT_PUBLIC_API_URL=https://managment-tasks-backend-latest.onrender.com
+
 # Executa o build da aplicação Next.js
 RUN npm run build
 
@@ -24,7 +26,6 @@ WORKDIR /app
 
 # Copiando os arquivos do build da etapa anterior
 COPY --from=builder /app ./
-
 # Instalando as dependências de produção
 RUN npm install --omit=dev
 
