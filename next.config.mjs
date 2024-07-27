@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    serverSourceMaps: true,
-  },
-  productionBrowserSourceMaps: true,
+  //   experimental: {
+  //     serverSourceMaps: true,
+  //   },
+  //   productionBrowserSourceMaps: true,
   logging: {
     fetches: {
       fullUrl: true,

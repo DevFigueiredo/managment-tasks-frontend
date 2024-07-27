@@ -111,19 +111,22 @@ const HomePage = () => {
   const headerBg = useColorModeValue("gray.100", "gray.600");
   const borderColor = useColorModeValue("gray.200", "gray.600");
   const buttonSize = useBreakpointValue({ base: "sm", md: "md" });
+
   if (isLoading) {
     return (
       <Box p={4}>
-        <Stack>
+        <Stack spacing={4}>
           <Skeleton height="40px" />
           <Skeleton height="40px" />
           <Skeleton height="60px" />
           <Skeleton height="300px" />
           <Skeleton height="60px" />
+          <Skeleton height="40px" width="200px" />
         </Stack>
       </Box>
     );
   }
+
   return (
     <Box p={6} bg="gray.50" minH="100vh">
       <Flex direction="column" minH="100vh">
@@ -151,6 +154,7 @@ const HomePage = () => {
                 <Th>Iniciado em</Th>
                 <Th>Prazo</Th>
                 <Th>Criado em</Th>
+                <Th>Status</Th>
                 <Th>Detalhes</Th>
               </Tr>
             </Thead>
@@ -212,6 +216,9 @@ const HomePage = () => {
                       )}
                     </Td>
                     <Td>
+                      {project.isDelayed ? "Em atraso" : "Dentro do Prazo"}
+                    </Td>
+                    <Td>
                       <Stack
                         direction={{ base: "column", md: "row" }}
                         spacing={2}
@@ -238,20 +245,28 @@ const HomePage = () => {
                   </Tr>
                 ))
               ) : (
-                <></>
+                <Tr>
+                  <Td colSpan={8} textAlign="center">
+                    Nenhum projeto encontrado
+                  </Td>
+                </Tr>
               )}
             </Tbody>
           </Table>
           <Flex direction="row" justify="center" mt={6}>
-            <Button
-              leftIcon={<AddIcon />}
-              colorScheme="teal"
-              variant="solid"
-              onClick={showAddProjectModal}
-              size={buttonSize}
-            >
-              Adicionar Novo Projeto
-            </Button>
+            {isLoading ? (
+              <Skeleton height="40px" width="200px" />
+            ) : (
+              <Button
+                leftIcon={<AddIcon />}
+                colorScheme="teal"
+                variant="solid"
+                onClick={showAddProjectModal}
+                size={buttonSize}
+              >
+                Adicionar Novo Projeto
+              </Button>
+            )}
           </Flex>
         </Box>
       </Flex>
