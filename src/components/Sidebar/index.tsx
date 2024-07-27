@@ -84,8 +84,8 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             Meus Projetos
           </Text>
           <VStack spacing={2} align="stretch">
-            {projects?.length &&
-              projects?.map((project) => (
+            {Array.isArray(projects) && projects.length > 0 ? (
+              projects.map((project) => (
                 <NavItem
                   href={`${Routes.DetailProject}/${project.id}`}
                   key={project.id}
@@ -97,7 +97,10 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
                 >
                   {project.name}
                 </NavItem>
-              ))}
+              ))
+            ) : (
+              <Text>Nenhum projeto encontrado</Text>
+            )}
           </VStack>
         </Box>
 
