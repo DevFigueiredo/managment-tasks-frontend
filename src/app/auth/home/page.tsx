@@ -22,6 +22,7 @@ import {
   AlertTitle,
   AlertDescription,
   useToast,
+  Skeleton,
 } from "@chakra-ui/react";
 import { AddIcon, ViewIcon } from "@chakra-ui/icons";
 import { useProject } from "@/hooks/useProject";
@@ -36,7 +37,7 @@ import { useForm } from "react-hook-form";
 const HomePage = () => {
   const { showAddProjectModal, getProjects, deleteProject, updateProject } =
     useProject();
-  const { data: projects = [], refetch } = getProjects();
+  const { data: projects = [], refetch, isLoading } = getProjects();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -110,7 +111,19 @@ const HomePage = () => {
   const headerBg = useColorModeValue("gray.100", "gray.600");
   const borderColor = useColorModeValue("gray.200", "gray.600");
   const buttonSize = useBreakpointValue({ base: "sm", md: "md" });
-
+  if (isLoading) {
+    return (
+      <Box p={4}>
+        <Stack>
+          <Skeleton height="40px" />
+          <Skeleton height="40px" />
+          <Skeleton height="60px" />
+          <Skeleton height="300px" />
+          <Skeleton height="60px" />
+        </Stack>
+      </Box>
+    );
+  }
   return (
     <Box p={6} bg="gray.50" minH="100vh">
       <Flex direction="column" minH="100vh">
@@ -142,7 +155,7 @@ const HomePage = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {projects?.length &&
+              {Array.isArray(projects) && projects.length > 0 ? (
                 projects?.map((project, index) => (
                   <Tr key={project.id}>
                     <Td>{project.name}</Td>
@@ -223,7 +236,10 @@ const HomePage = () => {
                       </Stack>
                     </Td>
                   </Tr>
-                ))}
+                ))
+              ) : (
+                <></>
+              )}
             </Tbody>
           </Table>
           <Flex direction="row" justify="center" mt={6}>

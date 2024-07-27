@@ -43,11 +43,17 @@ export default function ProjectList(props: Props): ReactElement {
   const { detailProject } = useProject();
   const { control } = useForm<Task[]>({ mode: "onChange" });
   const defaultStatus = statusList?.find((item) => item.default);
-  const { data: tasksData, refetch } = getTasks(props.projectId);
+  const {
+    data: tasksData,
+    refetch,
+    isLoading: isLoadingTasks,
+  } = getTasks(props.projectId);
   const [tasks, setTasks] = useState<Task[]>();
-  const { data: project, refetch: refetchProject } = detailProject(
-    props.projectId
-  );
+  const {
+    data: project,
+    refetch: refetchProject,
+    isLoading,
+  } = detailProject(props.projectId);
   useEffect(() => {
     setTasks(tasksData);
   }, [tasksData]);
@@ -140,7 +146,7 @@ export default function ProjectList(props: Props): ReactElement {
     refetchProject();
     refetch();
   };
-  if (!project) {
+  if (isLoading && isLoadingTasks) {
     return (
       <Box p={4}>
         <Stack>
