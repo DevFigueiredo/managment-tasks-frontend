@@ -1,7 +1,6 @@
 "use client";
 import { Box } from "@chakra-ui/react";
 import ProjectList from "@/components/ProjectList";
-import { useTask } from "@/hooks/useTask";
 export interface Props {
   params: {
     slug: string;

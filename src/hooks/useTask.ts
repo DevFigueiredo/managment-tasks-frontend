@@ -1,3 +1,4 @@
+"use client";
 import { Task } from "@/@core/domain/entities/task";
 import { ITaskHttpGateway } from "@/@core/domain/gateways/task.gateway-interface";
 import { TaskHttpGateway } from "@/@core/infra/gateways/task.gateway";
@@ -18,6 +19,7 @@ export function useTask() {
         return tasks;
       },
       refetchOnWindowFocus: true,
+      initialData: [],
     });
   }, []);
   async function addTask(newTask: Omit<Task, "Status">) {

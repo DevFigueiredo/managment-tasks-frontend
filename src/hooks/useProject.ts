@@ -1,3 +1,4 @@
+"use client";
 import { Project } from "@/@core/domain/entities/project";
 import { ProjectHttpGateway } from "@/@core/infra/gateways/project.gateway";
 import { ProjectContext } from "@/contexts/ProjectContext";
@@ -16,6 +17,7 @@ export function useProject() {
         return projects;
       },
       refetchOnWindowFocus: true,
+      initialData: [],
     });
   }, []);
 

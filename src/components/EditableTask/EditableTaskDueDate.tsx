@@ -1,3 +1,4 @@
+"use client";
 import { Box, Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
 import { useState } from "react";
 import { CalendarIcon } from "@chakra-ui/icons";

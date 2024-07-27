@@ -1,3 +1,4 @@
+"use client";
 import { Box, IconButton } from "@chakra-ui/react";
 import "react-datepicker/dist/react-datepicker.css";
 import { MdDelete } from "react-icons/md";

@@ -1,40 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   CloseButton,
   Flex,
   Text,
-  Icon,
   useColorModeValue,
-  List,
-  ListItem,
-  ListIcon,
-  Button,
   BoxProps,
   FlexProps,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuItem,
-  MenuList,
   IconButton,
   HStack,
-  Avatar,
   VStack,
   StackDivider,
+  Skeleton,
 } from "@chakra-ui/react";
-import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
-  FiMenu,
-  FiBell,
-  FiChevronDown,
-} from "react-icons/fi";
+import { FiHome, FiMenu } from "react-icons/fi";
 import { MdAddCircleOutline } from "react-icons/md";
 import { useProject } from "@/hooks/useProject";
 import { Routes } from "@/utils/routes";
@@ -50,7 +31,7 @@ interface SidebarProps extends BoxProps {
 
 export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const { showAddProjectModal, getProjects } = useProject();
-  const { data: projects } = getProjects();
+  const { data: projects = [], isLoading } = getProjects();
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
   );
@@ -85,7 +66,10 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         }
       >
         <NavItem
-          onClick={() => setSelectedProjectId(null)}
+          onClick={() => {
+            setSelectedProjectId(null);
+            onClose();
+          }}
           icon={FiHome}
           href={Routes.Home}
         >
@@ -101,8 +85,13 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             Meus Projetos
           </Text>
           <VStack spacing={2} align="stretch">
-            {projects?.length &&
-              projects?.map((project) => (
+            {isLoading ? (
+              // Renderiza esqueletos enquanto os dados estão carregando
+              Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton key={index} height="40px" />
+              ))
+            ) : projects.length > 0 ? (
+              projects.map((project) => (
                 <NavItem
                   href={`${Routes.DetailProject}/${project.id}`}
                   key={project.id}
@@ -114,13 +103,19 @@ export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
                 >
                   {project.name}
                 </NavItem>
-              ))}
+              ))
+            ) : (
+              <Text>Nenhum projeto encontrado</Text>
+            )}
           </VStack>
         </Box>
-
-        <NavItem icon={MdAddCircleOutline} onClick={showAddProjectModal}>
-          Adicionar Projeto
-        </NavItem>
+        {isLoading ? (
+          <Skeleton height="40px" />
+        ) : (
+          <NavItem icon={MdAddCircleOutline} onClick={showAddProjectModal}>
+            Adicionar Projeto
+          </NavItem>
+        )}
       </VStack>
     </Box>
   );

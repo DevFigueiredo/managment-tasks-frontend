@@ -22,6 +22,7 @@ import {
   AlertTitle,
   AlertDescription,
   useToast,
+  Skeleton,
 } from "@chakra-ui/react";
 import { AddIcon, ViewIcon } from "@chakra-ui/icons";
 import { useProject } from "@/hooks/useProject";
@@ -36,11 +37,11 @@ import { useForm } from "react-hook-form";
 const HomePage = () => {
   const { showAddProjectModal, getProjects, deleteProject, updateProject } =
     useProject();
-  const { data: projects, refetch } = getProjects(); // Utilize o refetch para recarregar os dados
+  const { data: projects = [], refetch, isLoading } = getProjects();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null); // Estado para armazenar erros
-  const [originalDate, setOriginalDate] = useState<string | null>(null); // Estado para armazenar a data original
+  const [error, setError] = useState<string | null>(null);
+  const [originalDate, setOriginalDate] = useState<string | null>(null);
   const cancelRef = React.useRef(null);
   const { control, setValue, getValues } = useForm();
   const toast = useToast();
@@ -56,7 +57,7 @@ const HomePage = () => {
         await deleteProject(projectToDelete);
         setProjectToDelete(null);
         setIsAlertOpen(false);
-        refetch(); // Refetch projects after deletion
+        refetch();
       } catch (err) {
         setError("Erro ao excluir o projeto. Por favor, tente novamente.");
       }
@@ -73,11 +74,6 @@ const HomePage = () => {
       const today = DateTime.now().startOf("day");
       const selectedDate = DateTime.fromJSDate(newDate).startOf("day");
 
-      // Retrieve the current endDate from form values
-      const currentEndDate = getValues(`project.${projectId}.endDate`);
-      const currentEndDateTime = DateTime.fromISO(currentEndDate);
-
-      // Validate that the new endDate is not in the past
       if (selectedDate < today) {
         toast({
           title: "Data inválida.",
@@ -86,7 +82,6 @@ const HomePage = () => {
           duration: 5000,
           isClosable: true,
         });
-        // Revert the value to the original date
         setValue(`project.${projectId}.endDate`, originalDate, {
           shouldDirty: true,
         });
@@ -95,7 +90,7 @@ const HomePage = () => {
 
       try {
         await updateProject({ endDate: newDate.toISOString(), id: projectId });
-        refetch(); // Refetch projects to get updated data
+        refetch();
       } catch (err) {
         toast({
           title: "Erro ao atualizar o projeto.",
@@ -105,7 +100,6 @@ const HomePage = () => {
           duration: 5000,
           isClosable: true,
         });
-        // Revert the value to the original date
         setValue(`project.${projectId}.endDate`, originalDate, {
           shouldDirty: true,
         });
@@ -113,12 +107,23 @@ const HomePage = () => {
     }
   };
 
-  // Define colors for light and dark modes
   const tableBg = useColorModeValue("white", "gray.700");
   const headerBg = useColorModeValue("gray.100", "gray.600");
   const borderColor = useColorModeValue("gray.200", "gray.600");
   const buttonSize = useBreakpointValue({ base: "sm", md: "md" });
-
+  if (isLoading) {
+    return (
+      <Box p={4}>
+        <Stack>
+          <Skeleton height="40px" />
+          <Skeleton height="40px" />
+          <Skeleton height="60px" />
+          <Skeleton height="300px" />
+          <Skeleton height="60px" />
+        </Stack>
+      </Box>
+    );
+  }
   return (
     <Box p={6} bg="gray.50" minH="100vh">
       <Flex direction="column" minH="100vh">
@@ -136,7 +141,7 @@ const HomePage = () => {
             bg={tableBg}
             borderWidth={1}
             borderColor={borderColor}
-            size="sm" // Ajuste o tamanho da tabela para se adequar ao layout
+            size="sm"
           >
             <Thead bg={headerBg}>
               <Tr>
@@ -150,7 +155,7 @@ const HomePage = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {projects?.length &&
+              {Array.isArray(projects) && projects.length > 0 ? (
                 projects?.map((project, index) => (
                   <Tr key={project.id}>
                     <Td>{project.name}</Td>
@@ -194,7 +199,6 @@ const HomePage = () => {
                         control={control}
                         isDue={true}
                         onDateChange={(date) => {
-                          // Save the original date before changing
                           setOriginalDate(
                             getValues(`project.${index}.endDate`)
                           );
@@ -209,10 +213,10 @@ const HomePage = () => {
                     </Td>
                     <Td>
                       <Stack
-                        direction={{ base: "column", md: "row" }} // Layout flexível
-                        spacing={2} // Espaçamento entre os botões
-                        align="center" // Alinha os botões verticalmente
-                        justify="flex-start" // Alinha os botões horizontalmente
+                        direction={{ base: "column", md: "row" }}
+                        spacing={2}
+                        align="center"
+                        justify="flex-start"
                       >
                         <Link href={`${Routes.DetailProject}/${project.id}`}>
                           <IconButton
@@ -232,20 +236,19 @@ const HomePage = () => {
                       </Stack>
                     </Td>
                   </Tr>
-                ))}
+                ))
+              ) : (
+                <></>
+              )}
             </Tbody>
           </Table>
-          <Flex
-            direction="row"
-            justify="center" // Centraliza o botão horizontalmente
-            mt={6} // Margem superior para afastar da tabela
-          >
+          <Flex direction="row" justify="center" mt={6}>
             <Button
               leftIcon={<AddIcon />}
               colorScheme="teal"
               variant="solid"
               onClick={showAddProjectModal}
-              size={buttonSize} // Ajusta o tamanho do botão com base na tela
+              size={buttonSize}
             >
               Adicionar Novo Projeto
             </Button>
