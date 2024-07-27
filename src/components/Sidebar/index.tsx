@@ -30,7 +30,7 @@ interface SidebarProps extends BoxProps {
 
 export const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const { showAddProjectModal, getProjects } = useProject();
-  const { data: projects } = getProjects();
+  const { data: projects = [] } = getProjects();
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
   );
