@@ -37,7 +37,7 @@ import { useForm } from "react-hook-form";
 const HomePage = () => {
   const { showAddProjectModal, getProjects, deleteProject, updateProject } =
     useProject();
-  const { data: projects = [], refetch, isLoading } = getProjects();
+  const { data: projects = [], refetch, isFetching: isLoading } = getProjects();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
