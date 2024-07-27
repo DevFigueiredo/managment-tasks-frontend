@@ -49,6 +49,8 @@ jobs:
         run: |
           docker build -t danielfigueiredo/managment-tasks-frontend:${{ env.VERSION }} --build-arg NEXT_PUBLIC_API_URL=${{ env.NEXT_PUBLIC_API_URL }} .
           docker push danielfigueiredo/managment-tasks-frontend:${{ env.VERSION }}
+        env:
+          NEXT_PUBLIC_API_URL: https://managment-tasks-backend-latest.onrender.com
 
       - name: Deploy (Webhook Trigger - Render)
         if: github.ref == 'refs/heads/develop'
