@@ -73,9 +73,6 @@ const HomePage = () => {
       const today = DateTime.now().startOf("day");
       const selectedDate = DateTime.fromJSDate(newDate).startOf("day");
 
-      const currentEndDate = getValues(`project.${projectId}.endDate`);
-      const currentEndDateTime = DateTime.fromISO(currentEndDate);
-
       if (selectedDate < today) {
         toast({
           title: "Data inválida.",
